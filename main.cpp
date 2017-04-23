@@ -53,7 +53,7 @@ void drawLattice(int L)
 	lattice_file.close();
 }
 
-bool check_direction(int **lattice, int L, int x0, int y0, int a0, int direction)
+bool check_direction(int **lattice, int L, int x0, int y0, int row_start, int a0, int direction)
 {
 	bool free = true;
 	int a = a0;
@@ -62,11 +62,6 @@ bool check_direction(int **lattice, int L, int x0, int y0, int a0, int direction
 	int k = 0;
 	int kx = 0;
 	int ky = 0;
-
-	int row_start = 0;
-
-	if (y % 2 != 0)
-		row_start = 1;
 
 	switch (direction)
 	{
@@ -157,24 +152,156 @@ bool check_direction(int **lattice, int L, int x0, int y0, int a0, int direction
 	return free;
 }
 
+void write_in_file(ofstream& pos_file, int **lattice, int L, int x0, int y0, int row_start, int a0, int direction)
+{
+	int x = x0;
+	int y = y0;
+	int a = a0;
+	int k = 0, kx = 0, ky = 0;
+
+	switch (direction)
+	{
+	case 1:															// north east direction
+		if (free)
+			while (k <= a)
+			{
+				if (x + kx >= L || y + ky >= L)
+					a++;
+				if (x + kx >= L && y + ky >= L)
+				{
+					x = 0;
+					y = 0;
+					kx = 0;
+					ky = 0;
+					pos_file << endl;
+					pos_file << endl;
+				}
+				else if (x + kx >= L)
+				{
+					x = 0;
+					kx = 0;
+					ky--;
+					pos_file << endl;
+					pos_file << endl;
+				}
+				else if (y + ky >= L)
+				{
+					y = 0;
+					ky = 0;
+					kx--;
+					pos_file << endl;
+					pos_file << endl;
+				}
+				lattice[x + kx][y + ky] = 1;
+				pos_file << x + kx << "\t" << y + ky << endl;
+				kx++; ky++;
+				k++;
+			}
+
+		pos_file << endl;
+		pos_file << endl;
+		break;
+
+
+	case 2:															// horizontal direction 
+		if (free)
+		{
+			while (k <= 2 * a + row_start)
+			{
+				if (x + kx >= L)
+				{
+					if (row_start == 1)
+					{
+						pos_file << L - 1 << "\t" << y << endl;
+						pos_file << endl;
+						pos_file << endl;
+						pos_file << 0 << "\t" << y << endl;
+					}
+					else
+					{
+						a0++;
+						pos_file << endl;
+						pos_file << endl;
+					}
+
+					x = row_start;
+					kx = 0;
+
+				}
+				lattice[x + kx][y] = 1;
+				pos_file << x + kx << "\t" << y << endl;
+				kx = kx + 2;
+				k = k + 2;
+			}
+		}
+
+		pos_file << endl;
+		pos_file << endl;
+
+		break;
+
+	case 3:																// south east direction 
+		if (free)
+			while (k <= a)
+			{
+				if (x + kx >= L || y - ky < 0)
+					a++;
+				if (x + kx >= L && y - ky < 0)
+				{
+					x = 0;
+					y = L - 1;
+					kx = 0;
+					ky = 0;
+					pos_file << endl;
+					pos_file << endl;
+				}
+				else if (x + kx >= L)
+				{
+					x = 0;
+					kx = 0;
+					ky--;
+					pos_file << endl;
+					pos_file << endl;
+				}
+				else if (y - ky < 0)
+				{
+					y = L - 1;
+					ky = 0;
+					kx--;
+					pos_file << endl;
+					pos_file << endl;
+				}
+				lattice[x + kx][y - ky] = 1;
+				pos_file << x + kx << "\t" << y - ky << endl;
+				kx++; ky++;
+				k++;
+			}
+
+		pos_file << endl;
+		pos_file << endl;
+		break;
+	}
+}
+
 int main()
 {
-	int N = 100; // number of tries 
+	double concentration = 0; // concentration of needles on lattice
+	double needles_mass = 0;
 	const int L = 50 + 1; // a square lattice of size LxL (can only be even number, cause we need odd number for our lattice)
 	int a = 5;  // length of a linear segments 
 	double p; // given probability
-	
+
 	int **lattice; // the parameter is a a pointer to a pointer 
 	lattice = new int *[L];
 	for (int i = 0; i < L; i++)
 		lattice[i] = new int[L];
-	
-	for (int i = 0;  i < L; i++)
-		for (int j = 0; j < L; j++) 
+
+	for (int i = 0; i < L; i++)
+		for (int j = 0; j < L; j++)
 		{
 			lattice[i][j] = 0;
 		}
-	
+
 	srand(time(NULL));
 
 	ofstream pos_file;
@@ -185,183 +312,54 @@ int main()
 
 	///////////////// Main loop
 	int free;
-	for (int i = 0; i < 250; i++)
+	while (concentration < 0.2)
 	{
-		pos_file << endl;
-		pos_file << endl;
-
 		int y = (rand() % (L));
-	    int x = (rand() % (L));
+		int x = (rand() % (L));
 
 		// Check if x position corresponds to lattice 
-		/* 
-		
-		0 *   *   * for odd y is only odd x allowed 
-		1   *   *   for even y only even x allowed 
+		/*
+
+		0 *   *   * for even y is only even x allowed
+		1   *   *   for odd y only odd x allowed
 		2 *   *   *
 		3   *   *
-
 		*/
-		int row_start = 0;
+		int row_start;
 
-		if (y % 2 != 0)
+		if (y % 2 == 0) // even 
+			row_start = 0;
+		else
 			row_start = 1;
 
-		if (y % 2 == 0)
+		if (y % 2 != 0 && x == 0)
+			x = 1;
+
+		if (y % 2 != 0 && x % 2 == 0)
 		{
-			if (x % 2 != 0)
-			{
 				if (x + 1 >= L)
-					x = x + 1 - L;
+					x = row_start;
 				else
 					x++;
-			}
-				
-		}
-		else
-		{
-			if (x % 2 == 0)
-			{
-				if (x + 1 >= L)
-					x = x + 1 - L;
-				else
-					x++;
-			}
 		}
 
-		int direction = 1 + (rand() % (3));									// Choose direction randomly
+		if (y % 2 == 0 && x % 2 != 0)
+		{
+			if (x + 1 >= L)
+				x = row_start;
+			else
+				x++;
+		}
 		
-		free = check_direction(lattice, L, x, y, a, direction);				// If direction is free then go to case otherwise just pass 
-		
+		int direction = 1 + (rand() % (3));												// Choose direction randomly
+		free = check_direction(lattice, L, x, y, row_start, a, direction);				// If direction is free then go to case otherwise just pass 
 		if (free)
 		{
-			int a0 = a;
-			int k = 0, kx = 0, ky = 0;
-
-			switch (direction)
-			{
-			case 1:															// north east direction
-				if (free)
-					while (k <= a0)
-					{
-						if (x + kx >= L || y + ky >= L)
-							a0++;
-						if (x + kx >= L && y + ky >= L)
-						{
-							x = 0;
-							y = 0;
-							kx = 0;
-							ky = 0;
-							pos_file << endl;
-							pos_file << endl;
-						}
-						else if (x + kx >= L)
-						{
-							x = 0;
-							kx = 0;
-							ky--;
-							pos_file << endl;
-							pos_file << endl;
-						}
-						else if (y + ky >= L)
-						{
-							y = 0;
-							ky = 0;
-							kx--;
-							pos_file << endl;
-							pos_file << endl;
-						}
-						lattice[x + kx][y + ky] = 1;
-						pos_file << x + kx << "\t" << y + ky << endl;
-						kx++; ky++;
-						k++;
-					}
-
-				pos_file << endl;
-				pos_file << endl;
-				break;
-
-
-			case 2:															// horizontal direction 
-				if (free)
-				{
-					while (k <= 2 * a0 + row_start)
-					{
-						if (x + kx >= L)
-						{
-							if (row_start == 1)
-							{
-								pos_file << L - 1 << "\t" << y << endl;
-								pos_file << endl;
-								pos_file << endl;
-								pos_file << 0 << "\t" << y << endl;
-							}
-							else
-							{
-								a0++;
-								pos_file << endl;
-								pos_file << endl;
-							}
-
-							x = row_start;
-							kx = 0;
-
-						}
-						lattice[x + kx][y] = 1;
-						pos_file << x + kx << "\t" << y << endl;
-						kx = kx + 2;
-						k = k + 2;
-					}
-				}
-
-				pos_file << endl;
-				pos_file << endl;
-
-				break;
-
-
-			case 3:																// south east direction 
-				if (free)
-					while (k <= a0)
-					{
-						if (x + kx >= L || y - ky < 0)
-							a0++;
-						if (x + kx >= L && y - ky < 0)
-						{
-							x = 0;
-							y = L - 1;
-							kx = 0;
-							ky = 0;
-							pos_file << endl;
-							pos_file << endl;
-						}
-						else if (x + kx >= L)
-						{
-							x = 0;
-							kx = 0;
-							ky--;
-							pos_file << endl;
-							pos_file << endl;
-						}
-						else if (y - ky < 0)
-						{
-							y = L - 1;
-							ky = 0;
-							kx--;
-							pos_file << endl;
-							pos_file << endl;
-						}
-						lattice[x + kx][y - ky] = 1;
-						pos_file << x + kx << "\t" << y - ky << endl;
-						kx++; ky++;
-						k++;
-					}
-
-				pos_file << endl;
-				pos_file << endl;
-				break;
-			}
+			needles_mass += a;
+			write_in_file(pos_file, lattice, L, x, y, row_start, a, direction);
 		}
+		concentration = needles_mass / (L * L);
 	}
 	pos_file.close();
+	
 }
