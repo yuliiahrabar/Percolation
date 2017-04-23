@@ -70,14 +70,13 @@ int main()
 	// drawLattice(L);
 
 	///////////////// Main loop
-	for (int i = 0; i < N; i++)
+	for (int i = 0; i < 250; i++)
 	{
 		pos_file << endl;
 		pos_file << endl;
 
 		int y = (rand() % (L));
 	    int x = (rand() % (L));
-
 
 		////////// Check if x position corresponds to lattice 
 		/* 
@@ -88,8 +87,7 @@ int main()
 		3   *   *
 
 		*/
-		
-		// check if y is odd
+
 		if (y % 2 == 0)
 		{
 			if (x % 2 != 0)
@@ -111,16 +109,10 @@ int main()
 					x++;
 			}
 		}
-		////////////
 
-		
-		///////////  Placing the needle in the right direction
+		int direction = 1 + (rand() % (3));
 
-		//int direction = 1 + (rand() % (3));
-
-		int direction = 1;
-
-		int row_start=0;
+		int row_start = 0;
 
 		if (y % 2 != 0)
 			row_start = 1;
@@ -136,15 +128,11 @@ int main()
 		bool stop = false;
 		switch (direction)
 		{
-
 		// north east direction
 		case 1:
-			//if ((x + a) > L && (y + a) > L)
-			// check if some positions are already occupied 
 			k = 0;
 			kx = 0;
 			ky = 0;
-			cout << "new one:" << endl;
 
 			while (k <= a0)
 			{
@@ -182,7 +170,6 @@ int main()
 			if (free)
 				while (k <= a)
 				{
-					cout << kx << " " << ky << endl;
 					if (x + kx >= L || y + ky >= L)
 						a++;
 					if (x + kx >= L && y + ky >= L)
@@ -218,293 +205,148 @@ int main()
 
 			pos_file << endl;
 			pos_file << endl;
-			/*
-
-			while (k <= a && (x + k) < L && (y + k) < L)
-			{
-				if (lattice[x + k][y + k] == 1)
-				{
-					free = false;
-					break;
-				}
-				k++;
-			}
-
-			if (k < a)
-			{
-				if (x + a >= L && y + a >= L)
-				{
-					int new_k = 0;
-					while (new_k <= a + 1 - k)
-					{
-						if (lattice[new_k][new_k] == 1)
-						{
-							free = false;
-							break;
-						}
-						new_k++;
-					}
-				}
-				else if (x + a >= L)
-				{
-					int new_k = 0;
-					while (new_k <= a + 1 - k)
-					{
-						if (lattice[new_k][y + k + new_k - 1] == 1)
-						{
-							free = false;
-							break;
-						}
-						new_k++;
-					}
-				}
-				else
-				{
-					int new_k = 0;
-					while (new_k <= a + 1 - k)
-					{
-						if (lattice[x + k + new_k - 1][new_k] == 1)
-						{
-							free = false;
-							break;
-						}
-						new_k++;
-					}
-				}
-			}
-			
-			k = 0;
-			if (free)
-			{
-				
-				while (k <= a && (x + k) < L && (y + k) < L)
-				{
-					lattice[x + k][y + k] = 1;
-					pos_file << x + k << "\t" << y + k << endl;
-					k++;
-				}
-
-				if (k < a)
-				{
-					pos_file << endl;
-					pos_file << endl;
-					if (x + a >= L && y + a >= L)
-					{
-						int new_k = 0;
-						while (new_k <= a + 1 - k)
-						{
-							lattice[new_k][new_k] = 1;
-							pos_file << new_k << "\t" << new_k << endl;
-							new_k++;
-						}
-					}
-					else if (x + a >= L)
-					{
-						int new_k = 0;
-						while (new_k <= a + 1 - k)
-						{
-							lattice[new_k][y + k + new_k] = 1;
-							pos_file << new_k << "\t" << y + k + new_k - 1 << endl;
-							new_k++;
-						}
-					}
-					else
-					{
-						int new_k = 0;
-						while (new_k <= a + 1 - k)
-						{
-							lattice[x + k + new_k - 1][new_k ] = 1;
-							pos_file << x + k + new_k - 1 << "\t" << new_k<< endl;
-							new_k++;
-						}
-					}
-				}
-			}
-			*/
 			break;
 
 		// horizontal direction 
 		case 2:
-			// check if some positions are already occupied 
 			k = 0;
-			while (k <= 2 * a + row_start && (x + k) < L)
+			kx = 0;
+			while (k <= 2 * a + row_start)
 			{
-				if (lattice[x + k][y] == 1)
+				if (x0 + kx >= L)
+				{
+					x0 = row_start;
+					kx = 0;
+				}
+				if (lattice[x0 + kx][y] == 1)
 				{
 					free = false;
 					break;
 				}
+				kx = kx + 2;
 				k = k + 2;
 			}
 			
-			if (k < 2 * a + row_start)
-			{
-				int new_k = 0;
-				while (new_k <= 2 * a - k + 2)
-				{
-					if (lattice[new_k][y] == 1) 
-					{
-						free = false;
-						break;
-					}
-					new_k = new_k + 2;
-				}
-			}
 
+			k = 0;
+			kx = 0;
 			if (free) 
 			{
-				int k = 0;
-				while (k <= 2 * a && (x + k) < L)
+				while (k <= 2 * a + row_start)
 				{
-					lattice[x + k][y] = 1;
-					pos_file << x + k << "\t" << y << endl;
+					if (x + kx >= L)
+					{
+						if (row_start == 1)
+						{
+							pos_file << L - 1 << "\t" << y << endl;
+							pos_file << endl;
+							pos_file << endl;
+							pos_file << 0 << "\t" << y << endl;
+						}
+						else
+						{
+							a++;
+							pos_file << endl;
+							pos_file << endl;
+						}
+						
+						x = row_start;
+						kx = 0;
+						
+					}
+					lattice[x + kx][y] = 1;
+					pos_file << x + kx << "\t" << y << endl;
+					kx = kx + 2;
 					k = k + 2;
 				}
-				
-				if (k < 2 * a)
-				{
-					if (row_start == 1)
-						pos_file << L-1 << "\t" << y << endl;
-					
-					pos_file << endl;
-					pos_file << endl;
-					
-					if (row_start == 1)
-						pos_file << 0 << "\t" << y << endl;
-					
-					int new_k = row_start;
-					while (new_k <= 2 * a - k + 2)
-					{
-						lattice[new_k][y] = 1;
-						pos_file << new_k << "\t" << y << endl;
-						new_k = new_k + 2;
-					}
-					pos_file << endl;
-					pos_file << endl;
-				}
-				else 
-				{
-					pos_file << endl;
-					pos_file << endl;
-				}
-
 			}
+
+			pos_file << endl;
+			pos_file << endl;
+
 			break;
 
 		// south east direction 
 		case 3:
-			//if ((x + a) > L || (y - a) < 0)
 
 			k = 0;
-			pos_file << endl;
-			pos_file << endl;
-			while (k <= a && (x + k) < L && (y + k) >= 0)
+			kx = 0;
+			ky = 0;
+			while (k <= a0)
 			{
-				if (lattice[x + k][y - k] == 1)
+				if (x0 + kx >= L || y0 - ky < 0)
+					a0++;
+				if (x0 + kx >= L && y0 - ky < 0)
+				{
+					x0 = 0;
+					y0 = L - 1;
+					kx = 0;
+					ky = 0;
+				}
+				else if (x0 + kx >= L)
+				{
+					x0 = 0;
+					kx = 0;
+					ky--;
+				}
+				else if (y0 - ky < 0)
+				{
+					y0 = L - 1;
+					ky = 0;
+					kx--;
+				}
+				if (lattice[x0 + kx][y0 - ky] == 1)
 				{
 					free = false;
 					break;
 				}
+				kx++; ky++;
 				k++;
 			}
-			if (k < a)
-			{
-				if ((x + a) > L && (y - a) < 0)
+			
+			k = 0; kx = 0; ky = 0;
+			if (free)
+				while (k <= a)
 				{
-					int new_k = 0;
-					while (new_k <= a + 1 - k)
+					if (x + kx >= L || y - ky < 0)
+						a++;
+					if (x + kx >= L && y - ky < 0)
 					{
-						if (lattice[new_k][L - 1 - new_k] == 1)
-						{
-							free = false;
-							break;
-						}
-						new_k++;
+						x = 0;
+						y = L - 1;
+						kx = 0;
+						ky = 0;
+						pos_file << endl;
+						pos_file << endl;
 					}
-				}
-				else if ((x + a) > L)
-				{
-					int new_k = 0;
-					while (new_k <= a + 1 - k)
+					else if (x + kx >= L)
 					{
-						if (lattice[new_k][y - k - new_k + 1] == 1)
-						{
-							free = false;
-							break;
-						}
-						new_k++;
+						x = 0;
+						kx = 0;
+						ky--;
+						pos_file << endl;
+						pos_file << endl;
 					}
-				}
-				else
-				{
-					int new_k = 0;
-					while (new_k <= a + 1 - k)
+					else if (y - ky < 0)
 					{
-						if (lattice[x + row_start + new_k][L - 1 - new_k] == 1)
-						{
-							free = false;
-							break;
-						}
-						new_k++;
+						y = L - 1;
+						ky = 0;
+						kx--;
+						pos_file << endl;
+						pos_file << endl;
 					}
-				}
-			}
-			pos_file << endl;
-			pos_file << endl;
-
-			if (true) 
-			{
-				k = 0;
-				while (k <= a && (x + k) < L && (y - k) >= 0)
-				{
-					lattice[x + k][y - k] = 1;
-					pos_file << x + k << "\t" << y - k << endl;
+					lattice[x + kx][y - ky] = 1;
+					pos_file << x + kx << "\t" << y - ky << endl;
+					kx++; ky++;
 					k++;
 				}
-				if (k < a)
-				{
-					pos_file << endl;
-					pos_file << endl;
-					if ((x + a) > L && (y - a) < 0)
-					{
-						int new_k = 0;
-						while (new_k <= a + 1 - k)
-						{
-							lattice[new_k][L - 1 - new_k] = 1;
-							pos_file << new_k << "\t" << L - 1 - new_k << endl;
-							new_k++;
-						}
-					}
-					else if ((x + a) > L)
-					{
-						int new_k = 0;
-						while (new_k <= a + 1 - k)
-						{
-							lattice[new_k][y - k - new_k + 1] = 1;
-							pos_file << new_k << "\t" << y - k - new_k + 1 << endl;
-							new_k++;
-						}
-					}
-					else
-					{
-						int new_k = 0;
-						while (new_k <= a + 1 - k)
-						{
-							lattice[x + row_start + new_k][L - 1 - new_k] = 1;
-							pos_file << x + row_start + new_k << "\t" << L - 1 - new_k << endl;
-							new_k++;
-						}
-					}
-					pos_file << endl;
-					pos_file << endl;
-				}
-			}
-			
-			
+
+			pos_file << endl;
+			pos_file << endl;
 			break;
-			
 		}
 	}
-	
+
+
 	pos_file.close();
 }
