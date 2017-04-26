@@ -421,9 +421,8 @@ int main()
 	}*/
 	
 	int rand_idx, x, y, direction;
-	//while (!posDir.empty())
-	//{
-	cout << "Start" << endl;
+	while (!posDir.empty())
+	{
 		rand_idx = (rand() % (posDir.size()));
 		x = posDir[rand_idx].x;
 		y = posDir[rand_idx].y;
@@ -434,7 +433,8 @@ int main()
 			row_start = 1;
 		direction = posDir[rand_idx].direction;
 		write_in_file(pos_file, lattice, L, x, y, row_start, a, direction);
-		/*posDir.erase(posDir.begin() + rand_idx);
+		
+		posDir.erase(posDir.begin() + rand_idx);
 		for (int i = 0; i < posDir.size(); i++)
 		{
 			x = posDir[i].x;
@@ -442,18 +442,12 @@ int main()
 			direction = posDir[i].direction;
 			if (check_direction(lattice, L, x, y, row_start, a, direction) == false)
 			{
-				posDir.erase(posDir.begin() + rand_idx);
+				posDir.erase(posDir.begin() + i);
 			}
 		}
-		*/
+		cout << posDir.size() << endl;
 
-	//}/*
-		/*
-		cout << "New: " << endl;
-		for (int i = 0; i < posDir.size(); i++)
-		{
-			cout << posDir[i].x << " " << posDir[i].y << " " << posDir[i].direction << endl;
-		}
-		*/
+	}
+	
 	pos_file.close();
 }
