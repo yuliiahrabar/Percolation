@@ -1,8 +1,6 @@
 cd 'C:\Users\YULIA\Desktop\Semestr letni\Praca_perkolacja\Percolation\Percolation'
-p 'lattice.txt' w l lt 3 linecolor 2, \
-'position.txt' w l lt 3 linecolor 1
 
 set yrange[0:50]
 set xrange[0:(50*sqrt(2)/2.)]
 plot 'lattice.txt' using ($1*(sqrt(2)/2.)):2  w l lt 3 linecolor 2 notitle, \
-'position.txt' using ($1*(sqrt(2)/2.)):2 w l lt 3 linecolor 1 notitle
+'position.txt' using ($1*(sqrt(2)/2.)):2 w l lt 3 lw 6 linecolor 1 notitle
