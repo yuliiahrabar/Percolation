@@ -70,17 +70,10 @@ bool check_direction(int **lattice, int L, int x, int y, int row_start, int a, i
 	int k = 0;
 	int kx = 0;
 	int ky = 0;
-	bool out_x = false;
-	bool out_y = false;
 
 	switch (direction)
 	{
-		// north east direction
 	case 1:
-
-		if (y == 0 && lattice[x][L - 1] == 1)
-			return false;
-
 		while (k <= a)
 		{
 			if (x + kx >= L || y + ky >= L)
@@ -91,23 +84,33 @@ bool check_direction(int **lattice, int L, int x, int y, int row_start, int a, i
 				y = 0;
 				kx = 0;
 				ky = 0;
-				out_x = true;
-				out_y = true;
 			}
 			else if (x + kx >= L)
 			{
 				x = 0;
 				kx = 0;
 				ky--;
-				out_x = true;
 			}
 			else if (y + ky >= L)
 			{
 				y = 0;
 				ky = 0;
 				kx--;
-				out_y = true;
 			}
+
+			if (x + kx == L - 1 && y + ky == L - 1 && lattice[0][0] == 1)
+				return false;
+			if (x + kx == 0 && y + ky == 0 && lattice[L - 1][L - 1] == 1)
+				return false;
+			if (x + kx == 0 && lattice[L - 1][y + ky] == 1)
+				return false;
+			if (y + ky == 0 && lattice[x + kx][L - 1] == 1)
+				return false;
+			if (x + kx == L - 1 && lattice[0][y + ky] == 1)
+				return false;
+			if (y + ky == L - 1 && lattice[x + kx][0] == 1)
+			return false;
+
 			if (lattice[x + kx][y + ky] == 1)
 			{
 				return false;
@@ -115,32 +118,9 @@ bool check_direction(int **lattice, int L, int x, int y, int row_start, int a, i
 			kx++; ky++;
 			k++;
 		}
-
-		if (!out_x && !out_y)
-		{
-			if (x + k == L - 1 && y + k == L - 1 && lattice[0][0] == 1)
-				return false;
-			else if (x + k == L - 1 && lattice[0][y + k] == 1)
-				return false;
-			else if (y + k == L - 1 && lattice[x + k][0] == 1)
-				return false;
-		}
-
 		break;
 
 	case 2:
-
-		if (x == 0 && y == 0)
-			while (k <= 2 * a)
-			{
-				if (lattice[x + kx][L - 1] == 1)
-					return false;
-				k = k + 2;
-			}
-		else if (x == 0 && lattice[L - 1][y] == 1)
-			return false;
-
-		k = 0;
 		while (k <= 2 * a + row_start)
 		{
 			if (x + kx >= L)
@@ -149,8 +129,17 @@ bool check_direction(int **lattice, int L, int x, int y, int row_start, int a, i
 					a++;
 				x = row_start;
 				kx = 0;
-				out_x = true;
 			}
+
+			if (y == L - 1 && lattice[x + kx][0] == 1)
+				return false;
+			if (y == 0 && lattice[x + kx][L - 1] == 1)
+				return false;
+
+			if (x + kx == L - 1 && lattice[0][y] == 1)
+				return false;
+			if (x + kx == 0 && lattice[L - 1][y] == 1)
+				return false;
 
 			if (lattice[x + kx][y] == 1)
 			{
@@ -160,15 +149,9 @@ bool check_direction(int **lattice, int L, int x, int y, int row_start, int a, i
 			k = k + 2;
 		}
 
-		if (!out_x && x + k == L - 1 && lattice[0][y] == 1)
-			return false;
-
 		break;
 
 	case 3:
-
-		if (y == L - 1 && lattice[x][0] == 1)
-			return false;
 
 		while (k <= a)
 		{
@@ -180,39 +163,39 @@ bool check_direction(int **lattice, int L, int x, int y, int row_start, int a, i
 				y = L - 1;
 				kx = 0;
 				ky = 0;
-				out_x = true;
-				out_y = true;
 			}
 			else if (x + kx >= L)
 			{
 				x = 0;
 				kx = 0;
 				ky--;
-				out_x = true;
 			}
 			else if (y - ky < 0)
 			{
 				y = L - 1;
 				ky = 0;
 				kx--;
-				out_y = true;
 			}
+
+			if (x + kx == L - 1 && y - ky == L - 1 && lattice[0][0] == 1)
+				return false;
+			if (x + kx == 0 && y - ky == 0 && lattice[L - 1][L - 1] == 1)
+				return false;
+			if (x + kx == 0 && lattice[L - 1][y - ky] == 1)
+				return false;
+			if (y - ky == 0 && lattice[x + kx][L - 1] == 1)
+				return false;
+			if (x + kx == L - 1 && lattice[0][y - ky] == 1)
+				return false;
+			if (y - ky == L - 1 && lattice[x + kx][0] == 1)
+				return false;
+
 			if (lattice[x + kx][y - ky] == 1)
 			{
 				return false;
 			}
 			kx++; ky++;
 			k++;
-		}
-
-		if (!out_x && !out_y)
-		{
-			if (x + k == L - 1 && y - k == 0 && lattice[0][L - 1] == 1)
-				return false;
-			else if (x + k == L - 1 && lattice[0][y + k] == 1)
-				return false;
-			else if (y - k == 0 && lattice[x + k][L - 1] == 1)
-				return false;
 		}
 
 		break;
@@ -230,9 +213,6 @@ void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int r
 	{
 	case 1:
 
-		if (y == 0)
-			lattice[x][L - 1] = 1;
-
 		while (k <= a)
 		{
 			if (x + kx >= L || y + ky >= L)
@@ -243,8 +223,6 @@ void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int r
 				y = 0;
 				kx = 0;
 				ky = 0;
-				out_x = true;
-				out_y = true;
 				pos_file << endl;
 				pos_file << endl;
 			}
@@ -253,7 +231,6 @@ void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int r
 				x = 0;
 				kx = 0;
 				ky--;
-				out_x = true;
 				pos_file << endl;
 				pos_file << endl;
 			}
@@ -262,42 +239,35 @@ void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int r
 				y = 0;
 				ky = 0;
 				kx--;
-				out_y = true;
 				pos_file << endl;
 				pos_file << endl;
 			}
+
+			if (x + kx == L - 1 && y + ky == L - 1)
+				lattice[0][0] = 1;
+			if (x + kx == 0 && y + ky == 0)
+				lattice[L - 1][L - 1] = 1;
+			if (x + kx == 0)
+				lattice[L - 1][y + ky] = 1;
+			if (y + ky == 0)
+				lattice[x + kx][L - 1] = 1;
+			if (x + kx == L - 1)
+				lattice[0][y + ky] = 1;
+			if (y + ky == L - 1)
+				lattice[x + kx][0] = 1;
+
 			lattice[x + kx][y + ky] = 1;
 			pos_file << x + kx << "\t" << y + ky << endl;
 			kx++; ky++;
 			k++;
 		}
 
-		if (!out_x && !out_y)
-		{
-			if (x + k == L - 1 && y + k == L - 1 )
-				lattice[0][0] = 1;
-			else if (x + k == L - 1)
-				lattice[0][y + k] = 1;
-			else if (y + k == L - 1)
-				lattice[x + k][0] = 1;
-		}
-		
 		pos_file << endl;
 		pos_file << endl;
 		break;
 
 
 	case 2:	
-
-		if (x == 0 && y == 0)
-			while (k <= 2 * a)
-			{
-				lattice[x + kx][L - 1] = 1;
-				k = k + 2;
-			}
-		else if (x == 0)
-			lattice[L - 1][y] = 1;
-
 
 		k = 0;
 		while (k <= 2 * a + row_start)
@@ -320,27 +290,28 @@ void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int r
 
 				x = row_start;
 				kx = 0;
-				out_x = true;
-
 			}
+
+			if (y == L - 1)
+				lattice[x + kx][0] = 1;
+			if (y == 0)
+				lattice[x + kx][L - 1] = 1;
+			if (x + kx == L - 1)
+				lattice[0][y] = 1;
+			if (x + kx == 0)
+				lattice[L - 1][y] = 1;
+
 			lattice[x + kx][y] = 1;
 			pos_file << x + kx << "\t" << y << endl;
 			kx = kx + 2;
 			k = k + 2;
 		}
 
-		if (!out_x && x + k == L - 1)
-			lattice[0][y] = 1;
-		
 		pos_file << endl;
 		pos_file << endl;
 		break;
 
 	case 3:																
-
-		if (y == L - 1)
-			lattice[x][0] = 1;
-
 		while (k <= a)
 		{
 			if (x + kx >= L || y - ky < 0)
@@ -351,8 +322,6 @@ void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int r
 				y = L - 1;
 				kx = 0;
 				ky = 0;
-				out_x = true;
-				out_y = true;
 				pos_file << endl;
 				pos_file << endl;
 			}
@@ -361,7 +330,6 @@ void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int r
 				x = 0;
 				kx = 0;
 				ky--;
-				out_x = true;
 				pos_file << endl;
 				pos_file << endl;
 			}
@@ -370,24 +338,27 @@ void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int r
 				y = L - 1;
 				ky = 0;
 				kx--;
-				out_y = true;
 				pos_file << endl;
 				pos_file << endl;
 			}
+
+			if (x + kx == L - 1 && y - ky == L - 1)
+				lattice[0][0] = 1;
+			if (x + kx == 0 && y - ky == 0)
+				lattice[L - 1][L - 1] = 1;
+			if (x + kx == 0)
+				lattice[L - 1][y - ky] = 1;
+			if (y - ky == 0)
+				lattice[x + kx][L - 1] = 1;
+			if (x + kx == L - 1)
+				lattice[0][y - ky] = 1;
+			if (y - ky == L - 1)
+				lattice[x + kx][0] = 1;
+
 			lattice[x + kx][y - ky] = 1;
 			pos_file << x + kx << "\t" << y - ky << endl;
 			kx++; ky++;
 			k++;
-		}
-
-		if (!out_x && !out_y)
-		{
-			if (x + k == L - 1 && y - k == 0)
-				lattice[0][L - 1] = 1;
-			else if (x + k == L - 1)
-				lattice[0][y + k] = 1;
-			else if (y - k == 0)
-				lattice[x + k][L - 1] = 1;
 		}
 
 		pos_file << endl;
