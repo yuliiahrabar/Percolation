@@ -130,21 +130,18 @@ bool check_direction(int **lattice, int L, int x, int y, int row_start, int a, i
 				x = row_start;
 				kx = 0;
 			}
-
+			// Checking if point is on boundaries
 			if (y == L - 1 && lattice[x + kx][0] == 1)
 				return false;
 			if (y == 0 && lattice[x + kx][L - 1] == 1)
 				return false;
-
 			if (x + kx == L - 1 && lattice[0][y] == 1)
 				return false;
 			if (x + kx == 0 && lattice[L - 1][y] == 1)
 				return false;
 
 			if (lattice[x + kx][y] == 1)
-			{
 				return false;
-			}
 			kx = kx + 2;
 			k = k + 2;
 		}
@@ -177,6 +174,7 @@ bool check_direction(int **lattice, int L, int x, int y, int row_start, int a, i
 				kx--;
 			}
 
+			// Checking if point is on boundaries
 			if (x + kx == L - 1 && y - ky == L - 1 && lattice[0][0] == 1)
 				return false;
 			if (x + kx == 0 && y - ky == 0 && lattice[L - 1][L - 1] == 1)
@@ -191,9 +189,7 @@ bool check_direction(int **lattice, int L, int x, int y, int row_start, int a, i
 				return false;
 
 			if (lattice[x + kx][y - ky] == 1)
-			{
 				return false;
-			}
 			kx++; ky++;
 			k++;
 		}
@@ -242,7 +238,7 @@ void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int r
 				pos_file << endl;
 				pos_file << endl;
 			}
-
+			// Checking if point is on boundaries
 			if (x + kx == L - 1 && y + ky == L - 1)
 				lattice[0][0] = 1;
 			if (x + kx == 0 && y + ky == 0)
@@ -291,7 +287,7 @@ void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int r
 				x = row_start;
 				kx = 0;
 			}
-
+			// Checking if point is on boundaries
 			if (y == L - 1)
 				lattice[x + kx][0] = 1;
 			if (y == 0)
@@ -341,7 +337,7 @@ void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int r
 				pos_file << endl;
 				pos_file << endl;
 			}
-
+			// Checking if point is on boundaries
 			if (x + kx == L - 1 && y - ky == L - 1)
 				lattice[0][0] = 1;
 			if (x + kx == 0 && y - ky == 0)
@@ -395,57 +391,157 @@ void find_cluster(int **t, int N, int i, int j, int num)
 {
 	t[i][j] = num;
 
-	// direction 1
-	
-	// x and y in range of lattice
+	// direction 1 
+	// x and y in range of lattice 
 	if (i + 1 < N && j + 1 < N && t[i + 1][j + 1] == 1)
 		find_cluster(t, N, i + 1, j + 1, num);
 	// both x and y are out of range
-	else if (i + 1 >= N && j + 1 >= N && t[0][0] == 1)
+	/*else*/ if (i + 1 >= N && j + 1 >= N && t[0][0] == 1)
 		find_cluster(t, N, 0, 0, num);
 	// only x is out of range
-	else if (i + 1 >= N && j + 1 < N && t[0][j + 1] == 1)
+	/*else*/ if (i + 1 >= N && j + 1 < N && t[0][j + 1] == 1)
 		find_cluster(t, N, 0, j + 1, num);
 	// only y is out of range 
-	else if (i + 1 < N && j + 1 >= N && t[i + 1][0] == 1)
+	/*else*/ if (i + 1 < N && j + 1 >= N && t[i + 1][0] == 1)
 		find_cluster(t, N, i + 1, 0, num);
 
-	/*if (i < N - 1 && j > 0 && t[i + 1][j - 1] == 1)
-		find_cluster(t, N, i + 1, j - 1, num);*/
+	// direction -1 
+	if (i - 1 >= 0 && j - 1 >= 0 && t[i - 1][j - 1] == 1)
+		find_cluster(t, N, i - 1, j - 1, num);
+	// both x and y are out of range
+	/*else*/ if (i - 1 < 0 && j - 1 < 0 && t[N - 1][N - 1] == 1)
+		find_cluster(t, N, N - 1, N - 1, num);
+	// only x is out of range
+	/*else*/ if (i - 1 < 0 && j - 1 >= 0 && t[N - 1][j - 1] == 1)
+		find_cluster(t, N, N - 1, j - 1, num);
+	// only y is out of range 
+	/*else*/ if (i - 1 >= 0 && j - 1 < 0 && t[i - 1][N - 1] == 1)
+		find_cluster(t, N, i - 1, N - 1, num);
 
 	// direction 2
-	if (i + 2 < N && t[i + 2][j] == 1)
-		find_cluster(t, N, i + 2, j, num);
-	else if (i + 2 >= N) 
-	{
-		// row is even so it starts from index 0
-		if (j % 2 == 0 && t[2][j] == 1)
-			find_cluster(t, N, 0, j, num);
-		// row is odd and starts from 1
-		else if (j % 2 != 0 && t[3][j] == 1)
-			find_cluster(t, N, 1, j, num);
-	}
-	/*if (i > 1 && t[i - 2][j] == 1)
-		find_cluster(t, N, i - 2, j, num);*/
+	if (i + 1 < N - 1  && t[i + 1][j] == 1)
+		find_cluster(t, N, i + 1, j, num);
+	/*else*/ if (i + 1 >= N - 1  && t[0][j] == 1)
+		find_cluster(t, N, 0, j, num);
 
+	// direction -2
+	if (i - 1 >= 0 && t[i - 1][j] == 1)
+		find_cluster(t, N, i - 1, j, num);
+	/*else*/ if (i - 1 <= 0 && t[N - 1][j] == 1)
+		find_cluster(t, N, N - 1, j, num);
 
 	// direction 3
 	if (i + 1 < N && j - 1 >= 0 && t[i + 1][j - 1] == 1)
 		find_cluster(t, N, i + 1, j - 1, num);
 	// both x and y are out of range
-	else if (i + 1 >= N && j - 1 < 0 && t[0][N - 1] == 1)
+	/*else*/ if (i + 1 >= N && j - 1 < 0 && t[0][N - 1] == 1)
 		find_cluster(t, N, 0, N - 1, num);
 	// only x is out of range
-	else if (i + 1 >= N && j - 1 >= 0 && t[0][j - 1] == 1)
+	/*else*/ if (i + 1 >= N && j - 1 >= 0 && t[0][j - 1] == 1)
 		find_cluster(t, N, 0, j - 1, num);
 	// only y is out of range 
-	else if (i + 1 < N && j - 1 < 0 && t[i + 1][N - 1] == 1)
+	/*else*/ if (i + 1 < N && j - 1 < 0 && t[i + 1][N - 1] == 1)
 		find_cluster(t, N, i + 1, N - 1, num);
 
-
-	/*if (i > 1 && j > 0 && t[i - 1][j - 1] == 1)
-		find_cluster(t, N, i - 1, j - 1, num);*/
+	// direction -3
+	if (i - 1 >= 0 && j + 1 < N && t[i - 1][j + 1] == 1)
+		find_cluster(t, N, i - 1, j + 1, num);
+	// both x and y are out of range
+	/*else*/ if (i - 1 < 0 && j + 1 >= N && t[N - 1][0] == 1)
+		find_cluster(t, N, N - 1, 0, num);
+	// only x is out of range
+	/*else */if (i - 1 < 0 && j + 1 < N && t[N - 1][j + 1] == 1)
+		find_cluster(t, N, N - 1, j - 1, num);
+	// only y is out of range 
+	/*else*/ if (i - 1 >= 0 && j + 1 >= N && t[i - 1][0] == 1)
+		find_cluster(t, N, i - 1, 0, num);
 }
+
+
+//void find_cluster(int **t, int N, int i, int j, int num)
+//{
+//	t[i][j] = num;
+//
+//	// direction 1 
+//	// x and y in range of lattice 
+//	if (i + 1 < N && j + 1 < N && t[i + 1][j + 1] == 1)
+//		find_cluster(t, N, i + 1, j + 1, num);
+//	// both x and y are out of range
+//	else if (i + 1 >= N && j + 1 >= N && t[0][0] == 1)
+//		find_cluster(t, N, 0, 0, num);
+//	// only x is out of range
+//	else if (i + 1 >= N && j + 1 < N && t[0][j + 1] == 1)
+//		find_cluster(t, N, 0, j + 1, num);
+//	// only y is out of range 
+//	else if (i + 1 < N && j + 1 >= N && t[i + 1][0] == 1)
+//		find_cluster(t, N, i + 1, 0, num);
+//	
+//	// direction -1 
+//	if (i - 1 >= 0 && j - 1 >= 0 && t[i - 1][j - 1] == 1)
+//		find_cluster(t, N, i - 1, j - 1, num);
+//	// both x and y are out of range
+//	else if (i - 1 < 0 && j - 1 < 0 && t[N - 1][N - 1] == 1)
+//		find_cluster(t, N, N - 1, N - 1, num);
+//	// only x is out of range
+//	else if (i + 1 < 0 && j - 1 >= 0 && t[N - 1][j - 1] == 1)
+//		find_cluster(t, N, N - 1, j - 1, num);
+//	// only y is out of range 
+//	else if (i - 1 >= 0 && j - 1 < 0 && t[i - 1][N - 1] == 1)
+//		find_cluster(t, N, i - 1, N - 1, num);
+//
+//	// direction 2
+//	if (i + 2 < N && t[i + 2][j] == 1)
+//		find_cluster(t, N, i + 2, j, num);
+//	else if (i + 2 >= N) 
+//	{
+//		// row is even so it starts from index 0
+//		if (j % 2 == 0 && t[0][j] == 1)
+//			find_cluster(t, N, 0, j, num);
+//		// row is odd and starts from 1
+//		else if (j % 2 != 0 && t[1][j] == 1)
+//			find_cluster(t, N, 1, j, num);
+//	}
+//	
+//	// direction -2
+//	if (i - 2 >= 0 && t[i - 2][j] == 1)
+//		find_cluster(t, N, i - 2, j, num);
+//	else if (i - 2 < 0)
+//	{
+//		// row is even
+//		if (j % 2 == 0 && t[N - 1][j] == 1)
+//			find_cluster(t, N, N - 1, j, num);
+//		// row is odd 
+//		else if (j % 2 != 0 && t[N - 2][j] == 1)
+//			find_cluster(t, N, N - 2, j, num);
+//	}
+//
+//	// direction 3
+//	if (i + 1 < N && j - 1 >= 0 && t[i + 1][j - 1] == 1)
+//		find_cluster(t, N, i + 1, j - 1, num);
+//	// both x and y are out of range
+//	else if (i + 1 >= N && j - 1 < 0 && t[0][N - 1] == 1)
+//		find_cluster(t, N, 0, N - 1, num);
+//	// only x is out of range
+//	else if (i + 1 >= N && j - 1 >= 0 && t[0][j - 1] == 1)
+//		find_cluster(t, N, 0, j - 1, num);
+//	// only y is out of range 
+//	else if (i + 1 < N && j - 1 < 0 && t[i + 1][N - 1] == 1)
+//		find_cluster(t, N, i + 1, N - 1, num);
+//
+//	// direction -3
+//	if (i - 1 >= 0 && j + 1 < N && t[i - 1][j + 1] == 1)
+//		find_cluster(t, N, i - 1, j + 1, num);
+//	// both x and y are out of range
+//	else if (i - 1 < 0 && j + 1 >= N && t[N - 1][0] == 1)
+//		find_cluster(t, N, N - 1, 0, num);
+//	// only x is out of range
+//	else if (i - 1 < 0 && j + 1 < N && t[N - 1][j + 1] == 1)
+//		find_cluster(t, N, 0, j - 1, num);
+//	// only y is out of range 
+//	else if (i - 1 >= 0 && j + 1 >= N && t[i - 1][0] == 1)
+//		find_cluster(t, N, i - 1, 0, num);
+//}
+
 
 void print_table(int **t, int N, string file_name)
 {
@@ -497,7 +593,7 @@ int main()
 	double concentration = 0.2; // concentration of needles on lattice
 	double con_update = 0;
 	double needles_mass = 0;
-	const int L = 50 + 1; // a square lattice of size LxL (can only be even number, cause we need odd number for our lattice)
+	const int L = 36 + 1; // a square lattice of size LxL (can only be even number, cause we need odd number for our lattice)
 	int a = 5;  // length of a linear segments 
 	double p; // given probability
 
@@ -508,9 +604,7 @@ int main()
 
 	for (int i = 0; i < L; i++)
 		for (int j = 0; j < L; j++)
-		{
 			lattice[i][j] = 0;
-		}
 
 	srand(time(NULL));
 
@@ -529,7 +623,6 @@ int main()
 		int direction = 1 + (rand() % (3));												
 
 		int row_start = 0;
-
 		if (y % 2 == 0) // even 
 			row_start = 0;
 		else
@@ -553,10 +646,11 @@ int main()
 		lattice_copy[i] = new int[L];
 
 	copy_table(lattice, lattice_copy, L);
-	print_table(lattice_copy, L, "table_copy.txt");
+	//print_table(lattice_copy, L, "table_copy.txt");
 	
 	int cluster_num = 2;
 	for (int i = 0; i < L; i++)
+	{
 		for (int j = 0; j < L; j++)
 		{
 			if (lattice_copy[i][j] == 1)
@@ -565,6 +659,7 @@ int main()
 				cluster_num++;
 			}
 		}
+	}
 	
 	////// Checking if adges are the same 
 	cout << "Left edge:" << endl;
@@ -594,7 +689,7 @@ int main()
 	cout << endl;
 
 
-	//print_table(lattice_copy, L, "clusters.txt");
+	print_table(lattice_copy, L, "clusters.txt");
 	
 	///////////////////////////////////////
 	////////// Part two after filling half of table
@@ -678,6 +773,7 @@ int main()
 		//cout << posDir.size() << endl;
 
 	}
+	print_table(lattice, L, "table2.txt");
 	pos_file.close();
 
 }
