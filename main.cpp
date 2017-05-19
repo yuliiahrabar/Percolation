@@ -363,101 +363,7 @@ void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int r
 	}
 }
 
-//void find_cluster(int **t, int N, int i, int j, int num)
-//{
-//	t[i][j] = num;
-//
-//	// direction 1
-//	if (i < N - 1 && j < N - 1 && t[i + 1][j + 1] == 1)
-//		find_cluster(t, N, i + 1, j + 1, num);
-//	if (i < N - 1 && j > 0 && t[i + 1][j - 1] == 1)
-//		find_cluster(t, N, i + 1, j - 1, num);
-//
-//	// direction 2
-//	if (i > 1 && t[i - 2][j] == 1)
-//		find_cluster(t, N, i - 2, j, num);
-//	if (i < N - 2 && t[i + 2][j] == 1)
-//		find_cluster(t, N, i + 2, j, num);
-//
-//	// direction 3
-//	if (i < N - 1 && j > 0 && t[i + 1][j - 1] == 1)
-//		find_cluster(t, N, i + 1, j - 1, num);
-//	if (i > 1 && j > 0 && t[i - 1][j - 1] == 1)
-//		find_cluster(t, N, i - 1, j - 1, num);
-//}
-
-
-void find_cluster(int **t, int N, int i, int j, int num)
-{
-	t[i][j] = num;
-
-	// direction 1 
-	// x and y in range of lattice 
-	if (i + 1 < N && j + 1 < N && t[i + 1][j + 1] == 1)
-		find_cluster(t, N, i + 1, j + 1, num);
-	// both x and y are out of range
-	/*else*/ if (i + 1 >= N && j + 1 >= N && t[0][0] == 1)
-		find_cluster(t, N, 0, 0, num);
-	// only x is out of range
-	/*else*/ if (i + 1 >= N && j + 1 < N && t[0][j + 1] == 1)
-		find_cluster(t, N, 0, j + 1, num);
-	// only y is out of range 
-	/*else*/ if (i + 1 < N && j + 1 >= N && t[i + 1][0] == 1)
-		find_cluster(t, N, i + 1, 0, num);
-
-	// direction -1 
-	if (i - 1 >= 0 && j - 1 >= 0 && t[i - 1][j - 1] == 1)
-		find_cluster(t, N, i - 1, j - 1, num);
-	// both x and y are out of range
-	/*else*/ if (i - 1 < 0 && j - 1 < 0 && t[N - 1][N - 1] == 1)
-		find_cluster(t, N, N - 1, N - 1, num);
-	// only x is out of range
-	/*else*/ if (i - 1 < 0 && j - 1 >= 0 && t[N - 1][j - 1] == 1)
-		find_cluster(t, N, N - 1, j - 1, num);
-	// only y is out of range 
-	/*else*/ if (i - 1 >= 0 && j - 1 < 0 && t[i - 1][N - 1] == 1)
-		find_cluster(t, N, i - 1, N - 1, num);
-
-	// direction 2
-	if (i + 1 < N - 1  && t[i + 1][j] == 1)
-		find_cluster(t, N, i + 1, j, num);
-	/*else*/ if (i + 1 >= N - 1  && t[0][j] == 1)
-		find_cluster(t, N, 0, j, num);
-
-	// direction -2
-	if (i - 1 >= 0 && t[i - 1][j] == 1)
-		find_cluster(t, N, i - 1, j, num);
-	/*else*/ if (i - 1 <= 0 && t[N - 1][j] == 1)
-		find_cluster(t, N, N - 1, j, num);
-
-	// direction 3
-	if (i + 1 < N && j - 1 >= 0 && t[i + 1][j - 1] == 1)
-		find_cluster(t, N, i + 1, j - 1, num);
-	// both x and y are out of range
-	/*else*/ if (i + 1 >= N && j - 1 < 0 && t[0][N - 1] == 1)
-		find_cluster(t, N, 0, N - 1, num);
-	// only x is out of range
-	/*else*/ if (i + 1 >= N && j - 1 >= 0 && t[0][j - 1] == 1)
-		find_cluster(t, N, 0, j - 1, num);
-	// only y is out of range 
-	/*else*/ if (i + 1 < N && j - 1 < 0 && t[i + 1][N - 1] == 1)
-		find_cluster(t, N, i + 1, N - 1, num);
-
-	// direction -3
-	if (i - 1 >= 0 && j + 1 < N && t[i - 1][j + 1] == 1)
-		find_cluster(t, N, i - 1, j + 1, num);
-	// both x and y are out of range
-	/*else*/ if (i - 1 < 0 && j + 1 >= N && t[N - 1][0] == 1)
-		find_cluster(t, N, N - 1, 0, num);
-	// only x is out of range
-	/*else */if (i - 1 < 0 && j + 1 < N && t[N - 1][j + 1] == 1)
-		find_cluster(t, N, N - 1, j - 1, num);
-	// only y is out of range 
-	/*else*/ if (i - 1 >= 0 && j + 1 >= N && t[i - 1][0] == 1)
-		find_cluster(t, N, i - 1, 0, num);
-}
-
-
+//// function for naming all the initial clusters 
 //void find_cluster(int **t, int N, int i, int j, int num)
 //{
 //	t[i][j] = num;
@@ -467,80 +373,147 @@ void find_cluster(int **t, int N, int i, int j, int num)
 //	if (i + 1 < N && j + 1 < N && t[i + 1][j + 1] == 1)
 //		find_cluster(t, N, i + 1, j + 1, num);
 //	// both x and y are out of range
-//	else if (i + 1 >= N && j + 1 >= N && t[0][0] == 1)
+//	/*else*/ if (i + 1 >= N && j + 1 >= N && t[0][0] == 1)
 //		find_cluster(t, N, 0, 0, num);
 //	// only x is out of range
-//	else if (i + 1 >= N && j + 1 < N && t[0][j + 1] == 1)
+//	/*else*/ if (i + 1 >= N && j + 1 < N && t[0][j + 1] == 1)
 //		find_cluster(t, N, 0, j + 1, num);
 //	// only y is out of range 
-//	else if (i + 1 < N && j + 1 >= N && t[i + 1][0] == 1)
+//	/*else*/ if (i + 1 < N && j + 1 >= N && t[i + 1][0] == 1)
 //		find_cluster(t, N, i + 1, 0, num);
-//	
+//
 //	// direction -1 
 //	if (i - 1 >= 0 && j - 1 >= 0 && t[i - 1][j - 1] == 1)
 //		find_cluster(t, N, i - 1, j - 1, num);
 //	// both x and y are out of range
-//	else if (i - 1 < 0 && j - 1 < 0 && t[N - 1][N - 1] == 1)
+//	/*else*/ if (i - 1 < 0 && j - 1 < 0 && t[N - 1][N - 1] == 1)
 //		find_cluster(t, N, N - 1, N - 1, num);
 //	// only x is out of range
-//	else if (i + 1 < 0 && j - 1 >= 0 && t[N - 1][j - 1] == 1)
+//	/*else*/ if (i - 1 < 0 && j - 1 >= 0 && t[N - 1][j - 1] == 1)
 //		find_cluster(t, N, N - 1, j - 1, num);
 //	// only y is out of range 
-//	else if (i - 1 >= 0 && j - 1 < 0 && t[i - 1][N - 1] == 1)
+//	/*else*/ if (i - 1 >= 0 && j - 1 < 0 && t[i - 1][N - 1] == 1)
 //		find_cluster(t, N, i - 1, N - 1, num);
 //
 //	// direction 2
-//	if (i + 2 < N && t[i + 2][j] == 1)
-//		find_cluster(t, N, i + 2, j, num);
-//	else if (i + 2 >= N) 
-//	{
-//		// row is even so it starts from index 0
-//		if (j % 2 == 0 && t[0][j] == 1)
-//			find_cluster(t, N, 0, j, num);
-//		// row is odd and starts from 1
-//		else if (j % 2 != 0 && t[1][j] == 1)
-//			find_cluster(t, N, 1, j, num);
-//	}
-//	
+//	if (i + 1 < N - 1  && t[i + 1][j] == 1)
+//		find_cluster(t, N, i + 1, j, num);
+//	/*else*/ if (i + 1 >= N - 1  && t[0][j] == 1)
+//		find_cluster(t, N, 0, j, num);
+//
 //	// direction -2
-//	if (i - 2 >= 0 && t[i - 2][j] == 1)
-//		find_cluster(t, N, i - 2, j, num);
-//	else if (i - 2 < 0)
-//	{
-//		// row is even
-//		if (j % 2 == 0 && t[N - 1][j] == 1)
-//			find_cluster(t, N, N - 1, j, num);
-//		// row is odd 
-//		else if (j % 2 != 0 && t[N - 2][j] == 1)
-//			find_cluster(t, N, N - 2, j, num);
-//	}
+//	if (i - 1 >= 0 && t[i - 1][j] == 1)
+//		find_cluster(t, N, i - 1, j, num);
+//	/*else*/ if (i - 1 <= 0 && t[N - 1][j] == 1)
+//		find_cluster(t, N, N - 1, j, num);
 //
 //	// direction 3
 //	if (i + 1 < N && j - 1 >= 0 && t[i + 1][j - 1] == 1)
 //		find_cluster(t, N, i + 1, j - 1, num);
 //	// both x and y are out of range
-//	else if (i + 1 >= N && j - 1 < 0 && t[0][N - 1] == 1)
+//	/*else*/ if (i + 1 >= N && j - 1 < 0 && t[0][N - 1] == 1)
 //		find_cluster(t, N, 0, N - 1, num);
 //	// only x is out of range
-//	else if (i + 1 >= N && j - 1 >= 0 && t[0][j - 1] == 1)
+//	/*else*/ if (i + 1 >= N && j - 1 >= 0 && t[0][j - 1] == 1)
 //		find_cluster(t, N, 0, j - 1, num);
 //	// only y is out of range 
-//	else if (i + 1 < N && j - 1 < 0 && t[i + 1][N - 1] == 1)
+//	/*else*/ if (i + 1 < N && j - 1 < 0 && t[i + 1][N - 1] == 1)
 //		find_cluster(t, N, i + 1, N - 1, num);
 //
 //	// direction -3
 //	if (i - 1 >= 0 && j + 1 < N && t[i - 1][j + 1] == 1)
 //		find_cluster(t, N, i - 1, j + 1, num);
 //	// both x and y are out of range
-//	else if (i - 1 < 0 && j + 1 >= N && t[N - 1][0] == 1)
+//	/*else*/ if (i - 1 < 0 && j + 1 >= N && t[N - 1][0] == 1)
 //		find_cluster(t, N, N - 1, 0, num);
 //	// only x is out of range
-//	else if (i - 1 < 0 && j + 1 < N && t[N - 1][j + 1] == 1)
-//		find_cluster(t, N, 0, j - 1, num);
+//	/*else */if (i - 1 < 0 && j + 1 < N && t[N - 1][j + 1] == 1)
+//		find_cluster(t, N, N - 1, j - 1, num);
 //	// only y is out of range 
-//	else if (i - 1 >= 0 && j + 1 >= N && t[i - 1][0] == 1)
+//	/*else*/ if (i - 1 >= 0 && j + 1 >= N && t[i - 1][0] == 1)
 //		find_cluster(t, N, i - 1, 0, num);
 //}
+
+
+void find_cluster(int **t, int N, int i, int j, int num)
+{
+	t[i][j] = num;
+
+	//direction 1
+	// x and y are out of range
+	if (i + 1 >= N - 1 && j + 1 >= N - 1 && t[0][0] == 1)
+		find_cluster(t, N, 0, 0, num);
+	// x is out of range
+	if (i + 1 >= N - 1 && j + 1 < N - 1 && t[0][N - 1] == 1)
+		find_cluster(t, N, 0, j - 1, num);
+	// y is out of range
+	if (i + 1 < N - 1 && j + 1 >= N - 1 && t[i + 1][0] == 1)
+		find_cluster(t, N, i + 1, 0, num);
+	// both inside
+	if (i + 1 < N - 1 && j + 1 < N - 1 && t[i + 1][j + 1] == 1)
+		find_cluster(t, N, i + 1, j + 1, num);
+
+	//direction -1
+	// x and y are smaller than 0
+	if (i - 1 <= 0 && j - 1 <= 0 && t[N - 1][N - 1] == 1)
+		find_cluster(t, N, N - 1, N - 1, num);
+	// x is smaller than 0
+	if (i - 1 <= 0 && j - 1 > 0 && t[N - 1][j - 1] == 1)
+		find_cluster(t, N, N - 1, j - 1, num);
+	// y is smaller than 0
+	if (i - 1 > 0 && j - 1 <= 0 && t[i - 1][N - 1] == 1)
+		find_cluster(t, N, i - 1, N - 1, num);
+	// both inside
+	if (i - 1 > 0 && j - 1 > 0 && t[i - 1][j - 1] == 1)
+		find_cluster(t, N, i - 1, j - 1, num);
+
+	//direction 2
+	// x is out of range 
+	if (i + 2 >= N - 1 && t[0][j] == 1)
+		find_cluster(t, N, 0, j, num);
+	// inside
+	if (i + 2 < N - 1 && t[i + 2][j] == 1)
+		find_cluster(t, N, i + 2, j, num);
+
+	//direction -2
+	// x is smaller that 0
+	if (i - 2 <= 0 && t[N - 1][j] == 1)
+		find_cluster(t, N, N - 1, j, num);
+	// inside
+	if (i - 2 > 0 && t[i - 2][j] == 1)
+		find_cluster(t, N, i - 2, j, num);
+
+	//direction 3
+	// x and y are out of range
+	if (i + 1 >= N - 1 && j - 1 <= 0 && t[0][N - 1] == 1)
+		find_cluster(t, N, 0, N - 1, num);
+	// if x is larger than N-1
+	if (i + 1 >= N - 1 && j - 1 > 0 && t[0][j - 1] == 1)
+		find_cluster(t, N, 0, j - 1, num);
+	// if y is smaller than 0
+	if (i + 1 < N - 1 && j - 1 <= 0 && t[i + 1][N - 1] == 1)
+		find_cluster(t, N, i + 1, N - 1, num);
+	// both inside
+	if (i + 1 < N - 1 && j - 1 > 0 && t[i + 1][j - 1] == 1)
+		find_cluster(t, N, i + 1, j - 1, num);
+
+	//direction -3
+	// x and y are out of range
+	if (i - 1 <= 0 && j + 1 >= N - 1 && t[N - 1][0] == 1)
+		find_cluster(t, N, N - 1, 0, num);
+	// if x is smaller than 0
+	if (i - 1 <= 0 && j + 1 < N - 1 && t[N - 1][j + 1] == 1)
+		find_cluster(t, N, N - 1, j + 1, num);
+	// if y is larger than N-1
+	if (i - 1 > 0 && j + 1 >= N - 1 && t[i - 1][0] == 1)
+		find_cluster(t, N, i - 1, 0, num);
+	// both inside 
+	if (i - 1 > 0 && j + 1 < N - 1 && t[i - 1][j + 1] == 1)
+		find_cluster(t, N, i - 1, j + 1, num);
+
+
+}
+
 
 
 void print_table(int **t, int N, string file_name)
@@ -593,7 +566,7 @@ int main()
 	double concentration = 0.2; // concentration of needles on lattice
 	double con_update = 0;
 	double needles_mass = 0;
-	const int L = 36 + 1; // a square lattice of size LxL (can only be even number, cause we need odd number for our lattice)
+	const int L = 100 + 1; // a square lattice of size LxL (can only be even number, cause we need odd number for our lattice)
 	int a = 5;  // length of a linear segments 
 	double p; // given probability
 
