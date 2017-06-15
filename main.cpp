@@ -2,7 +2,7 @@
 	Percolation problem on the triangular lattice
 	percolation.cpp
 	Yuliia Hrabar
-	Last update 27/04/17
+	Last update 10/06/17
 */
 
 #include "stdafx.h"
@@ -11,6 +11,7 @@
 #include <fstream>
 #include "time.h"
 #include <string>
+#include <iomanip>.
 #include "UnionFind.h"
 
 using namespace std;
@@ -26,7 +27,7 @@ void draw_lattice(int L)
 {
 
 	ofstream lattice_file;
-	lattice_file.open("lattice.txt"); // file that contains points for drawing the whole lattice
+	lattice_file.open("lattice.txt");						// file that contains points for drawing the whole lattice
 	lattice_file << "# x \t y \n";
 
 	for (int i = 0; i < L; i = i + 1)
@@ -64,6 +65,20 @@ void draw_lattice(int L)
 
 	}
 	lattice_file.close();
+}
+
+
+void copy_file(string infile_name, string outfile_name)
+{
+	ifstream infile(infile_name);
+	ofstream outfile(outfile_name);
+	string content = "";
+	while (!infile.eof()) // get content of infile
+		content += infile.get();
+	content.erase(content.end() - 1);     // erase last character
+	infile.close();
+	outfile << content;                 
+	outfile.close();
 }
 
 bool check_direction(int **lattice, int L, int x, int y, int row_start, int a, int direction)
@@ -131,7 +146,6 @@ bool check_direction(int **lattice, int L, int x, int y, int row_start, int a, i
 				x = row_start;
 				kx = 0;
 			}
-			// Checking if point is on boundaries
 			if (y == L - 1 && lattice[x + kx][0] == 1)
 				return false;
 			if (y == 0 && lattice[x + kx][L - 1] == 1)
@@ -175,7 +189,6 @@ bool check_direction(int **lattice, int L, int x, int y, int row_start, int a, i
 				kx--;
 			}
 
-			// Checking if point is on boundaries
 			if (x + kx == L - 1 && y - ky == L - 1 && lattice[0][0] == 1)
 				return false;
 			if (x + kx == 0 && y - ky == 0 && lattice[L - 1][L - 1] == 1)
@@ -199,6 +212,167 @@ bool check_direction(int **lattice, int L, int x, int y, int row_start, int a, i
 	}
 	return true;
 }
+
+//void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int row_start, int a, int direction)
+//{
+//	int k = 0, kx = 0, ky = 0;
+//	bool out_x = false;
+//	bool out_y = false;
+//
+//	switch (direction)
+//	{
+//	case 1:
+//
+//		while (k <= a)
+//		{
+//			if (x + kx >= L || y + ky >= L)
+//				a++;
+//			if (x + kx >= L && y + ky >= L)
+//			{
+//				x = 0;
+//				y = 0;
+//				kx = 0;
+//				ky = 0;
+//				pos_file << endl;
+//				pos_file << endl;
+//			}
+//			else if (x + kx >= L)
+//			{
+//				x = 0;
+//				kx = 0;
+//				ky--;
+//				pos_file << endl;
+//				pos_file << endl;
+//			}
+//			else if (y + ky >= L)
+//			{
+//				y = 0;
+//				ky = 0;
+//				kx--;
+//				pos_file << endl;
+//				pos_file << endl;
+//			}
+//			if (x + kx == L - 1 && y + ky == L - 1)
+//				lattice[0][0] = 1;
+//			if (x + kx == 0 && y + ky == 0)
+//				lattice[L - 1][L - 1] = 1;
+//			if (x + kx == 0)
+//				lattice[L - 1][y + ky] = 1;
+//			if (y + ky == 0)
+//				lattice[x + kx][L - 1] = 1;
+//			if (x + kx == L - 1)
+//				lattice[0][y + ky] = 1;
+//			if (y + ky == L - 1)
+//				lattice[x + kx][0] = 1;
+//
+//			lattice[x + kx][y + ky] = 1;
+//			pos_file << x + kx << "\t" << y + ky << endl;
+//			kx++; ky++;
+//			k++;
+//		}
+//
+//		pos_file << endl;
+//		pos_file << endl;
+//		break;
+//
+//
+//	case 2:	
+//
+//		k = 0;
+//		while (k <= 2 * a + row_start)
+//		{
+//			if (x + kx >= L)
+//			{
+//				if (row_start == 1)
+//				{
+//					pos_file << L - 1 << "\t" << y << endl;
+//					pos_file << endl;
+//					pos_file << endl;
+//					pos_file << 0 << "\t" << y << endl;
+//				}
+//				else
+//				{
+//					a++;
+//					pos_file << endl;
+//					pos_file << endl;
+//				}
+//
+//				x = row_start;
+//				kx = 0;
+//			}
+//			if (y == L - 1)
+//				lattice[x + kx][0] = 1;
+//			if (y == 0)
+//				lattice[x + kx][L - 1] = 1;
+//			if (x + kx == L - 1)
+//				lattice[0][y] = 1;
+//			if (x + kx == 0)
+//				lattice[L - 1][y] = 1;
+//
+//			lattice[x + kx][y] = 1;
+//			pos_file << x + kx << "\t" << y << endl;
+//			kx = kx + 2;
+//			k = k + 2;
+//		}
+//
+//		pos_file << endl;
+//		pos_file << endl;
+//		break;
+//
+//	case 3:																
+//		while (k <= a)
+//		{
+//			if (x + kx >= L || y - ky < 0)
+//				a++;
+//			if (x + kx >= L && y - ky < 0)
+//			{
+//				x = 0;
+//				y = L - 1;
+//				kx = 0;
+//				ky = 0;
+//				pos_file << endl;
+//				pos_file << endl;
+//			}
+//			else if (x + kx >= L)
+//			{
+//				x = 0;
+//				kx = 0;
+//				ky--;
+//				pos_file << endl;
+//				pos_file << endl;
+//			}
+//			else if (y - ky < 0)
+//			{
+//				y = L - 1;
+//				ky = 0;
+//				kx--;
+//				pos_file << endl;
+//				pos_file << endl;
+//			}
+//			if (x + kx == L - 1 && y - ky == L - 1)
+//				lattice[0][0] = 1;
+//			if (x + kx == 0 && y - ky == 0)
+//				lattice[L - 1][L - 1] = 1;
+//			if (x + kx == 0)
+//				lattice[L - 1][y - ky] = 1;
+//			if (y - ky == 0)
+//				lattice[x + kx][L - 1] = 1;
+//			if (x + kx == L - 1)
+//				lattice[0][y - ky] = 1;
+//			if (y - ky == L - 1)
+//				lattice[x + kx][0] = 1;
+//
+//			lattice[x + kx][y - ky] = 1;
+//			pos_file << x + kx << "\t" << y - ky << endl;
+//			kx++; ky++;
+//			k++;
+//		}
+//
+//		pos_file << endl;
+//		pos_file << endl;
+//		break;
+//	}
+//}
 
 void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int row_start, int a, int direction)
 {
@@ -239,7 +413,6 @@ void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int r
 				pos_file << endl;
 				pos_file << endl;
 			}
-			// Checking if point is on boundaries
 			if (x + kx == L - 1 && y + ky == L - 1)
 				lattice[0][0] = 1;
 			if (x + kx == 0 && y + ky == 0)
@@ -264,7 +437,7 @@ void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int r
 		break;
 
 
-	case 2:	
+	case 2:
 
 		k = 0;
 		while (k <= 2 * a + row_start)
@@ -288,7 +461,6 @@ void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int r
 				x = row_start;
 				kx = 0;
 			}
-			// Checking if point is on boundaries
 			if (y == L - 1)
 				lattice[x + kx][0] = 1;
 			if (y == 0)
@@ -308,7 +480,7 @@ void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int r
 		pos_file << endl;
 		break;
 
-	case 3:																
+	case 3:
 		while (k <= a)
 		{
 			if (x + kx >= L || y - ky < 0)
@@ -338,7 +510,6 @@ void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int r
 				pos_file << endl;
 				pos_file << endl;
 			}
-			// Checking if point is on boundaries
 			if (x + kx == L - 1 && y - ky == L - 1)
 				lattice[0][0] = 1;
 			if (x + kx == 0 && y - ky == 0)
@@ -363,158 +534,6 @@ void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int r
 		break;
 	}
 }
-
-//// function for naming all the initial clusters 
-//void find_cluster(int **t, int N, int i, int j, int num)
-//{
-//	t[i][j] = num;
-//
-//	// direction 1 
-//	// x and y in range of lattice 
-//	if (i + 1 < N && j + 1 < N && t[i + 1][j + 1] == 1)
-//		find_cluster(t, N, i + 1, j + 1, num);
-//	// both x and y are out of range
-//	/*else*/ if (i + 1 >= N && j + 1 >= N && t[0][0] == 1)
-//		find_cluster(t, N, 0, 0, num);
-//	// only x is out of range
-//	/*else*/ if (i + 1 >= N && j + 1 < N && t[0][j + 1] == 1)
-//		find_cluster(t, N, 0, j + 1, num);
-//	// only y is out of range 
-//	/*else*/ if (i + 1 < N && j + 1 >= N && t[i + 1][0] == 1)
-//		find_cluster(t, N, i + 1, 0, num);
-//
-//	// direction -1 
-//	if (i - 1 >= 0 && j - 1 >= 0 && t[i - 1][j - 1] == 1)
-//		find_cluster(t, N, i - 1, j - 1, num);
-//	// both x and y are out of range
-//	/*else*/ if (i - 1 < 0 && j - 1 < 0 && t[N - 1][N - 1] == 1)
-//		find_cluster(t, N, N - 1, N - 1, num);
-//	// only x is out of range
-//	/*else*/ if (i - 1 < 0 && j - 1 >= 0 && t[N - 1][j - 1] == 1)
-//		find_cluster(t, N, N - 1, j - 1, num);
-//	// only y is out of range 
-//	/*else*/ if (i - 1 >= 0 && j - 1 < 0 && t[i - 1][N - 1] == 1)
-//		find_cluster(t, N, i - 1, N - 1, num);
-//
-//	// direction 2
-//	if (i + 1 < N - 1  && t[i + 1][j] == 1)
-//		find_cluster(t, N, i + 1, j, num);
-//	/*else*/ if (i + 1 >= N - 1  && t[0][j] == 1)
-//		find_cluster(t, N, 0, j, num);
-//
-//	// direction -2
-//	if (i - 1 >= 0 && t[i - 1][j] == 1)
-//		find_cluster(t, N, i - 1, j, num);
-//	/*else*/ if (i - 1 <= 0 && t[N - 1][j] == 1)
-//		find_cluster(t, N, N - 1, j, num);
-//
-//	// direction 3
-//	if (i + 1 < N && j - 1 >= 0 && t[i + 1][j - 1] == 1)
-//		find_cluster(t, N, i + 1, j - 1, num);
-//	// both x and y are out of range
-//	/*else*/ if (i + 1 >= N && j - 1 < 0 && t[0][N - 1] == 1)
-//		find_cluster(t, N, 0, N - 1, num);
-//	// only x is out of range
-//	/*else*/ if (i + 1 >= N && j - 1 >= 0 && t[0][j - 1] == 1)
-//		find_cluster(t, N, 0, j - 1, num);
-//	// only y is out of range 
-//	/*else*/ if (i + 1 < N && j - 1 < 0 && t[i + 1][N - 1] == 1)
-//		find_cluster(t, N, i + 1, N - 1, num);
-//
-//	// direction -3
-//	if (i - 1 >= 0 && j + 1 < N && t[i - 1][j + 1] == 1)
-//		find_cluster(t, N, i - 1, j + 1, num);
-//	// both x and y are out of range
-//	/*else*/ if (i - 1 < 0 && j + 1 >= N && t[N - 1][0] == 1)
-//		find_cluster(t, N, N - 1, 0, num);
-//	// only x is out of range
-//	/*else */if (i - 1 < 0 && j + 1 < N && t[N - 1][j + 1] == 1)
-//		find_cluster(t, N, N - 1, j - 1, num);
-//	// only y is out of range 
-//	/*else*/ if (i - 1 >= 0 && j + 1 >= N && t[i - 1][0] == 1)
-//		find_cluster(t, N, i - 1, 0, num);
-//}
-
-
-void find_cluster(int **t, int N, int i, int j, int num)
-{
-	t[i][j] = num;
-
-	//direction 1
-	// x and y are out of range
-	if (i + 1 >= N - 1 && j + 1 >= N - 1 && t[0][0] == 1)
-		find_cluster(t, N, 0, 0, num);
-	// x is out of range
-	if (i + 1 >= N - 1 && j + 1 < N - 1 && t[0][N - 1] == 1)
-		find_cluster(t, N, 0, j - 1, num);
-	// y is out of range
-	if (i + 1 < N - 1 && j + 1 >= N - 1 && t[i + 1][0] == 1)
-		find_cluster(t, N, i + 1, 0, num);
-	// both inside
-	if (i + 1 < N - 1 && j + 1 < N - 1 && t[i + 1][j + 1] == 1)
-		find_cluster(t, N, i + 1, j + 1, num);
-
-	//direction -1
-	// x and y are smaller than 0
-	if (i - 1 <= 0 && j - 1 <= 0 && t[N - 1][N - 1] == 1)
-		find_cluster(t, N, N - 1, N - 1, num);
-	// x is smaller than 0
-	if (i - 1 <= 0 && j - 1 > 0 && t[N - 1][j - 1] == 1)
-		find_cluster(t, N, N - 1, j - 1, num);
-	// y is smaller than 0
-	if (i - 1 > 0 && j - 1 <= 0 && t[i - 1][N - 1] == 1)
-		find_cluster(t, N, i - 1, N - 1, num);
-	// both inside
-	if (i - 1 > 0 && j - 1 > 0 && t[i - 1][j - 1] == 1)
-		find_cluster(t, N, i - 1, j - 1, num);
-
-	//direction 2
-	// x is out of range 
-	if (i + 2 >= N - 1 && t[0][j] == 1)
-		find_cluster(t, N, 0, j, num);
-	// inside
-	if (i + 2 < N - 1 && t[i + 2][j] == 1)
-		find_cluster(t, N, i + 2, j, num);
-
-	//direction -2
-	// x is smaller that 0
-	if (i - 2 <= 0 && t[N - 1][j] == 1)
-		find_cluster(t, N, N - 1, j, num);
-	// inside
-	if (i - 2 > 0 && t[i - 2][j] == 1)
-		find_cluster(t, N, i - 2, j, num);
-
-	//direction 3
-	// x and y are out of range
-	if (i + 1 >= N - 1 && j - 1 <= 0 && t[0][N - 1] == 1)
-		find_cluster(t, N, 0, N - 1, num);
-	// if x is larger than N-1
-	if (i + 1 >= N - 1 && j - 1 > 0 && t[0][j - 1] == 1)
-		find_cluster(t, N, 0, j - 1, num);
-	// if y is smaller than 0
-	if (i + 1 < N - 1 && j - 1 <= 0 && t[i + 1][N - 1] == 1)
-		find_cluster(t, N, i + 1, N - 1, num);
-	// both inside
-	if (i + 1 < N - 1 && j - 1 > 0 && t[i + 1][j - 1] == 1)
-		find_cluster(t, N, i + 1, j - 1, num);
-
-	//direction -3
-	// x and y are out of range
-	if (i - 1 <= 0 && j + 1 >= N - 1 && t[N - 1][0] == 1)
-		find_cluster(t, N, N - 1, 0, num);
-	// if x is smaller than 0
-	if (i - 1 <= 0 && j + 1 < N - 1 && t[N - 1][j + 1] == 1)
-		find_cluster(t, N, N - 1, j + 1, num);
-	// if y is larger than N-1
-	if (i - 1 > 0 && j + 1 >= N - 1 && t[i - 1][0] == 1)
-		find_cluster(t, N, i - 1, 0, num);
-	// both inside 
-	if (i - 1 > 0 && j + 1 < N - 1 && t[i - 1][j + 1] == 1)
-		find_cluster(t, N, i - 1, j + 1, num);
-
-
-}
-
 
 void print_table(int **t, int N, string file_name)
 {
@@ -561,95 +580,8 @@ int check_start_x(int L, int x, int y, int row_start)
 	return x;
 }
 
-void check_edges_of_lattice(int **lattice, int L)
+void union_sets(int **lattice, int L, UnionFind& myUnion)
 {
-	////// Checking if adges are the same 
-	cout << "Left edge:" << endl;
-	for (int i = 0; i < L; i++)
-	{
-		cout << lattice[0][i] << " ";
-	}
-	cout << endl;
-	cout << "Right edge:" << endl;
-	for (int i = 0; i < L; i++)
-	{
-		cout << lattice[L - 1][i] << " ";
-	}
-	cout << endl;
-	cout << endl;
-	cout << "Down edge:" << endl;
-	for (int i = 0; i < L; i++)
-	{
-		cout << lattice[i][0] << " ";
-	}
-	cout << endl;
-	cout << "Upper edge:" << endl;
-	for (int i = 0; i < L; i++)
-	{
-		cout << lattice[i][L - 1] << " ";
-	}
-	cout << endl;
-}
-
-
-
-int main()
-{
-	double concentration = 0.2;															 // concentration of needles on lattice
-	double con_update = 0;
-	double needles_mass = 0;
-	const int L = 1000 + 1;																 // a square lattice of size LxL (can only be even number, cause we need odd number for our lattice)
-	int a = 100;																		 // length of a linear segments 
-	double p = 0.3;																		 // given probability
-
-	int **lattice;																		 // the parameter is a a pointer to a pointer 
-	lattice = new int *[L];
-	for (int i = 0; i < L; i++)
-		lattice[i] = new int[L];
-
-	for (int i = 0; i < L; i++)
-		for (int j = 0; j < L; j++)
-			lattice[i][j] = 0;
-
-	srand(time(NULL));
-
-	ofstream pos_file;
-	pos_file.open("position.txt");														 // file which contains position of all the needles
-	pos_file << "# x \t y \n";
-
-	// draw_lattice(L);
-
-	/////////////////////////////////////////////////////////////////
-	///////////////// Main loop
-	////////////////////////////////////////////////////////////////
-
-	int needles_num;
-	while (con_update <  concentration)
-	{
-			int y = (rand() % (L));
-			int x = (rand() % (L));
-			int direction = 1 + (rand() % (3));
-
-			int row_start = 0;
-			if (y % 2 == 0) // even 
-				row_start = 0;
-			else
-				row_start = 1;
-
-			x = check_start_x(L, x, y, row_start);
-			if (check_direction(lattice, L, x, y, row_start, a, direction))					 // If direction is free then go to case otherwise just pass
-			{
-				needles_mass += a;
-				write_in_file(pos_file, lattice, L, x, y, row_start, a, direction);
-			}
-			con_update = needles_mass / (L * L);
-		
-	}
-
-	//////////////////////////////////////////////////////////////////
-	/////////////////// First percolation checking
-	UnionFind myUnion(L * L);
-	
 	for (int i = 0; i < L; i++)
 		for (int j = 0; j < L; j++)
 		{
@@ -728,26 +660,37 @@ int main()
 					myUnion.Union(i * L + j, (i - 1)*L + j + 1);
 			}
 		}
-	
-	string k = "I haven't ";
-	for (int i = 0; i < L - 1; i++)
-		if (lattice[i][0] == 1)
-		{
-			for (int j = 0; j < L; j++)
-				if (myUnion.Find(i*L) == myUnion.Find(j*L + L - 2))
-				{
-					k = "I have ";
-					break;
-				}
-					
-		}
-	std::cout << k << "found a path from first row of the lattice to the last one." << endl;
-	
-	///////////////////////////////////////
-	////////// Part two: filling rest of the table
+}
 
+void check_percolation(int **lattice, int L, UnionFind& myUnion)
+{
+	//bool contains = false;
+	//string result = "I have not found a path.";
+	//for (int i = 0; i < L; i++)
+	//{
+	//	if (lattice[0][i] == 1)
+	//		cout << myUnion.Find(i) << endl;
+	//	if (lattice[0][i] == 1)
+	//	{
+	//		for (int x = 0; x < L; x++)
+	//			for (int y = 0; y < L; y++)
+	//			{
+	//				if (lattice[x][y] == 1)
+	//				if (myUnion.Find(i*L) == myUnion.Find(x*L + y))
+	//				{	
+	//					contains = true;
+	//				}
+	//			}
+	//	}
+	//	if (contains)
+	//		result = "I have found a path!";
+	//}
+	//cout << result << endl;
+}
+
+void filling_rest(ofstream& pos_file, int **lattice, int L, int a, double needles_mass, UnionFind& myUnion)
+{
 	vector<possibleDirections> posDir;
-
 	int idx = 0;
 	int row_start;
 	for (int i = 0; i < L; i++)
@@ -761,29 +704,17 @@ int main()
 					row_start = 0;
 				else
 					row_start = 1;
-				if (check_direction(lattice, L, i, j, row_start, a, 1))
+
+				for (int dir = 1; dir <= 3; dir++)
 				{
-					posDir.push_back(possibleDirections());
-					posDir[idx].x = i;
-					posDir[idx].y = j;
-					posDir[idx].direction = 1;
-					idx++;
-				}
-				if (check_direction(lattice, L, i, j, row_start, a, 2))
-				{
-					posDir.push_back(possibleDirections());
-					posDir[idx].x = i;
-					posDir[idx].y = j;
-					posDir[idx].direction = 2;
-					idx++;
-				}
-				if (check_direction(lattice, L, i, j, row_start, a, 3))
-				{
-					posDir.push_back(possibleDirections());
-					posDir[idx].x = i;
-					posDir[idx].y = j;
-					posDir[idx].direction = 3;
-					idx++;
+					if (check_direction(lattice, L, i, j, row_start, a, dir))
+					{
+						posDir.push_back(possibleDirections());
+						posDir[idx].x = i;
+						posDir[idx].y = j;
+						posDir[idx].direction = dir;
+						idx++;
+					}
 				}
 			}
 		}
@@ -796,7 +727,7 @@ int main()
 		x = posDir[rand_idx].x;
 		y = posDir[rand_idx].y;
 		direction = posDir[rand_idx].direction;
-		if (y % 2 == 0) 
+		if (y % 2 == 0)
 			row_start = 0;
 		else
 			row_start = 1;
@@ -817,6 +748,87 @@ int main()
 		}
 
 	}
-	std::cout << needles_mass / (L*L) << endl;
+	cout << "Needles mass: " << needles_mass << ", number of needles: " << needles_mass / 2 << endl;
+	cout << "Jamming concentration: " << needles_mass * 1.4 / (L * L * 0.5) << endl;
+}
+
+void print_representative(int L, UnionFind& myUnion)
+{
+	for (int i = 0; i < L; i++)
+	{
+		for (int j = 0; j < L; j++)
+		{
+			cout << setw(3) << myUnion.Find(i*L + j) << " ";
+		}
+		std::cout << std::endl;
+	}
+}
+
+int main()
+{
+	double concentration = 0.25;															 // concentration of needles on lattice
+	double con_update = 0;
+	double needles_mass = 0;
+	const int L = 24 + 1;																 // a square lattice of size LxL (can only be even number, cause we need odd number for our lattice)
+	int a = 5;																			 // length of a linear segments 
+
+	int **lattice;																		 // the parameter is a a pointer to a pointer 
+	lattice = new int *[L];
+	for (int i = 0; i < L; i++)
+		lattice[i] = new int[L];
+
+	for (int i = 0; i < L; i++)
+		for (int j = 0; j < L; j++)
+			lattice[i][j] = 0;
+
+	//srand(time(NULL));
+
+	ofstream pos_file;
+	string file_name = "position.txt";
+	pos_file.open(file_name);														 // file which contains position of all the needles
+	pos_file << "# x \t y \n";
+
+	draw_lattice(L);
+
+	/////////////////////////////////////////////////////////////////
+	///////////////// Main loop /////////////////////////////////////
+	/////////////////////////////////////////////////////////////////
+
+	int needles_num = 0;
+	while (con_update <  concentration)
+	{
+			int y = (rand() % (L));
+			int x = (rand() % (L));
+			int direction = 1 + (rand() % (3));
+
+			int row_start = 0;
+			if (y % 2 == 0) // even 
+				row_start = 0;
+			else
+				row_start = 1;
+
+			x = check_start_x(L, x, y, row_start);
+			if (check_direction(lattice, L, x, y, row_start, a, direction))					 // If direction is free then go to case otherwise just pass
+			{
+				needles_num++;
+				needles_mass += a + 1;
+				write_in_file(pos_file, lattice, L, x, y, row_start, a, direction);
+				//copy_file(file_name, "movie/p" + to_string(needles_num) + ".txt");
+			}
+			con_update = needles_mass * 1.41 / (L * L * 0.5);
+	}
+	cout << "First concentration: " << con_update << endl;
+
+	
+	UnionFind myUnion(L * L);
+	//filling_rest(pos_file, lattice, L, a, needles_mass, myUnion);
+	
+	
+	union_sets(lattice, L, myUnion);
+	print_table(lattice, L, "my_table.txt");
+	
+	check_percolation(lattice, L, myUnion);
+	
+	//print_representative(L, myUnion);
 	pos_file.close();
 }
