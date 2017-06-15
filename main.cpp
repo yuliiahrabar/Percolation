@@ -664,28 +664,59 @@ void union_sets(int **lattice, int L, UnionFind& myUnion)
 
 void check_percolation(int **lattice, int L, UnionFind& myUnion)
 {
-	//bool contains = false;
-	//string result = "I have not found a path.";
-	//for (int i = 0; i < L; i++)
-	//{
-	//	if (lattice[0][i] == 1)
-	//		cout << myUnion.Find(i) << endl;
-	//	if (lattice[0][i] == 1)
-	//	{
-	//		for (int x = 0; x < L; x++)
-	//			for (int y = 0; y < L; y++)
-	//			{
-	//				if (lattice[x][y] == 1)
-	//				if (myUnion.Find(i*L) == myUnion.Find(x*L + y))
-	//				{	
-	//					contains = true;
-	//				}
-	//			}
-	//	}
-	//	if (contains)
-	//		result = "I have found a path!";
-	//}
-	//cout << result << endl;
+	for (int i = 0; i < L; i++)
+	{
+		if (lattice[0][i] == 1)
+		{	
+			bool has = true;
+			for (int y = 1; y < L; y++)
+			{
+				bool in_row = false;
+				for (int x = 0; x < L; x++)
+				{
+					if (myUnion.Find(i) == myUnion.Find(y * L + x))
+						in_row = true;
+				}
+				if (!in_row)
+					has = false;
+			}
+			if (has)
+			{
+				cout << "There is a path (y) !" << endl;
+				cout << myUnion.Find(i) << endl;
+				return;
+			}
+				
+		}
+	}
+	cout << "There is no path!" << endl;
+
+	for (int i = 0; i < L; i++)
+	{
+		if (lattice[i][0] == 1)
+		{
+			bool has = true;
+			for (int x = 1; x < L; x++)
+			{
+				bool in_column = false;
+				for (int y = 0; y < L; y++)
+				{
+					if (myUnion.Find(i) == myUnion.Find(y * L + x))
+						in_column = true;
+				}
+				if (!in_column)
+					has = false;
+			}
+			if (has)
+			{
+				cout << "There is a path (x) !" << endl;
+				cout << myUnion.Find(i) << endl;
+				return;
+			}
+
+		}
+	}
+	cout << "There is no path!" << endl;
 }
 
 void filling_rest(ofstream& pos_file, int **lattice, int L, int a, double needles_mass, UnionFind& myUnion)
@@ -766,11 +797,14 @@ void print_representative(int L, UnionFind& myUnion)
 
 int main()
 {
-	double concentration = 0.25;															 // concentration of needles on lattice
-	double con_update = 0;
-	double needles_mass = 0;
+	double concentration = 0.2;															 // concentration of needles on lattice
 	const int L = 24 + 1;																 // a square lattice of size LxL (can only be even number, cause we need odd number for our lattice)
 	int a = 5;																			 // length of a linear segments 
+
+
+	double con_update = 0;
+	double needles_mass = 0;
+
 
 	int **lattice;																		 // the parameter is a a pointer to a pointer 
 	lattice = new int *[L];
@@ -828,7 +862,6 @@ int main()
 	print_table(lattice, L, "my_table.txt");
 	
 	check_percolation(lattice, L, myUnion);
-	
-	//print_representative(L, myUnion);
+	print_representative(L, myUnion);
 	pos_file.close();
 }
