@@ -213,166 +213,6 @@ bool check_direction(int **lattice, int L, int x, int y, int row_start, int a, i
 	return true;
 }
 
-//void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int row_start, int a, int direction)
-//{
-//	int k = 0, kx = 0, ky = 0;
-//	bool out_x = false;
-//	bool out_y = false;
-//
-//	switch (direction)
-//	{
-//	case 1:
-//
-//		while (k <= a)
-//		{
-//			if (x + kx >= L || y + ky >= L)
-//				a++;
-//			if (x + kx >= L && y + ky >= L)
-//			{
-//				x = 0;
-//				y = 0;
-//				kx = 0;
-//				ky = 0;
-//				pos_file << endl;
-//				pos_file << endl;
-//			}
-//			else if (x + kx >= L)
-//			{
-//				x = 0;
-//				kx = 0;
-//				ky--;
-//				pos_file << endl;
-//				pos_file << endl;
-//			}
-//			else if (y + ky >= L)
-//			{
-//				y = 0;
-//				ky = 0;
-//				kx--;
-//				pos_file << endl;
-//				pos_file << endl;
-//			}
-//			if (x + kx == L - 1 && y + ky == L - 1)
-//				lattice[0][0] = 1;
-//			if (x + kx == 0 && y + ky == 0)
-//				lattice[L - 1][L - 1] = 1;
-//			if (x + kx == 0)
-//				lattice[L - 1][y + ky] = 1;
-//			if (y + ky == 0)
-//				lattice[x + kx][L - 1] = 1;
-//			if (x + kx == L - 1)
-//				lattice[0][y + ky] = 1;
-//			if (y + ky == L - 1)
-//				lattice[x + kx][0] = 1;
-//
-//			lattice[x + kx][y + ky] = 1;
-//			pos_file << x + kx << "\t" << y + ky << endl;
-//			kx++; ky++;
-//			k++;
-//		}
-//
-//		pos_file << endl;
-//		pos_file << endl;
-//		break;
-//
-//
-//	case 2:	
-//
-//		k = 0;
-//		while (k <= 2 * a + row_start)
-//		{
-//			if (x + kx >= L)
-//			{
-//				if (row_start == 1)
-//				{
-//					pos_file << L - 1 << "\t" << y << endl;
-//					pos_file << endl;
-//					pos_file << endl;
-//					pos_file << 0 << "\t" << y << endl;
-//				}
-//				else
-//				{
-//					a++;
-//					pos_file << endl;
-//					pos_file << endl;
-//				}
-//
-//				x = row_start;
-//				kx = 0;
-//			}
-//			if (y == L - 1)
-//				lattice[x + kx][0] = 1;
-//			if (y == 0)
-//				lattice[x + kx][L - 1] = 1;
-//			if (x + kx == L - 1)
-//				lattice[0][y] = 1;
-//			if (x + kx == 0)
-//				lattice[L - 1][y] = 1;
-//
-//			lattice[x + kx][y] = 1;
-//			pos_file << x + kx << "\t" << y << endl;
-//			kx = kx + 2;
-//			k = k + 2;
-//		}
-//
-//		pos_file << endl;
-//		pos_file << endl;
-//		break;
-//
-//	case 3:																
-//		while (k <= a)
-//		{
-//			if (x + kx >= L || y - ky < 0)
-//				a++;
-//			if (x + kx >= L && y - ky < 0)
-//			{
-//				x = 0;
-//				y = L - 1;
-//				kx = 0;
-//				ky = 0;
-//				pos_file << endl;
-//				pos_file << endl;
-//			}
-//			else if (x + kx >= L)
-//			{
-//				x = 0;
-//				kx = 0;
-//				ky--;
-//				pos_file << endl;
-//				pos_file << endl;
-//			}
-//			else if (y - ky < 0)
-//			{
-//				y = L - 1;
-//				ky = 0;
-//				kx--;
-//				pos_file << endl;
-//				pos_file << endl;
-//			}
-//			if (x + kx == L - 1 && y - ky == L - 1)
-//				lattice[0][0] = 1;
-//			if (x + kx == 0 && y - ky == 0)
-//				lattice[L - 1][L - 1] = 1;
-//			if (x + kx == 0)
-//				lattice[L - 1][y - ky] = 1;
-//			if (y - ky == 0)
-//				lattice[x + kx][L - 1] = 1;
-//			if (x + kx == L - 1)
-//				lattice[0][y - ky] = 1;
-//			if (y - ky == L - 1)
-//				lattice[x + kx][0] = 1;
-//
-//			lattice[x + kx][y - ky] = 1;
-//			pos_file << x + kx << "\t" << y - ky << endl;
-//			kx++; ky++;
-//			k++;
-//		}
-//
-//		pos_file << endl;
-//		pos_file << endl;
-//		break;
-//	}
-//}
 
 void write_in_file(ofstream& pos_file, int **lattice, int L, int x, int y, int row_start, int a, int direction)
 {
@@ -580,6 +420,82 @@ int check_start_x(int L, int x, int y, int row_start)
 	return x;
 }
 
+
+void union_of_one(int **lattice, int L, int i, int j, UnionFind& myUnion)
+{
+	//direction 1
+	// x and y are out of range
+	if (i + 1 >= L - 1 && j + 1 >= L - 1 && lattice[0][0] == 1)
+		myUnion.Union(i * L + j, 0);
+	// x is out of range
+	if (i + 1 >= L - 1 && j + 1 < L - 1 && lattice[0][L - 1] == 1)
+		myUnion.Union(i * L + j, L - 1);
+	// y is out of range
+	if (i + 1 < L - 1 && j + 1 >= L - 1 && lattice[i + 1][0] == 1)
+		myUnion.Union(i * L + j, 0);
+	// both inside
+	if (i + 1 < L - 1 && j + 1 < L - 1 && lattice[i + 1][j + 1] == 1)
+		myUnion.Union(i * L + j, (i + 1) * L + j + 1);
+
+	//direction -1
+	// x and y are smaller than 0
+	if (i - 1 <= 0 && j - 1 <= 0 && lattice[L - 1][L - 1] == 1)
+		myUnion.Union(i * L + j, (L - 1)*L + L - 1);
+	// x is smaller than 0
+	if (i - 1 <= 0 && j - 1 > 0 && lattice[L - 1][j - 1] == 1)
+		myUnion.Union(i * L + j, (L - 1)*L + j - 1);
+	// y is smaller than 0
+	if (i - 1 > 0 && j - 1 <= 0 && lattice[i - 1][L - 1] == 1)
+		myUnion.Union(i * L + j, (i - 1)*L + L - 1);
+	// both inside
+	if (i - 1 > 0 && j - 1 > 0 && lattice[i - 1][j - 1] == 1)
+		myUnion.Union(i * L + j, (i - 1)*L + j - 1);
+
+	//direction 2
+	// x is out of range 
+	if (i + 2 >= L - 1 && lattice[0][j] == 1)
+		myUnion.Union(i * L + j, j);
+	// inside
+	if (i + 2 < L - 1 && lattice[i + 2][j] == 1)
+		myUnion.Union(i * L + j, (i + 2)*L + j);
+
+	//direction -2
+	// x is smaller that 0
+	if (i - 2 <= 0 && lattice[L - 1][j] == 1)
+		myUnion.Union(i * L + j, (L - 1)*L + j);
+	// inside
+	if (i - 2 > 0 && lattice[i - 2][j] == 1)
+		myUnion.Union(i * L + j, (i - 2)*L + j);
+
+	//direction 3
+	// x and y are out of range
+	if (i + 1 >= L - 1 && j - 1 <= 0 && lattice[0][L - 1] == 1)
+		myUnion.Union(i * L + j, L - 1);
+	// if x is larger than N-1
+	if (i + 1 >= L - 1 && j - 1 > 0 && lattice[0][j - 1] == 1)
+		myUnion.Union(i * L + j, j - 1);
+	// if y is smaller than 0
+	if (i + 1 < L - 1 && j - 1 <= 0 && lattice[i + 1][L - 1] == 1)
+		myUnion.Union(i * L + j, (i + 1)*L + L - 1);
+	// both inside
+	if (i + 1 < L - 1 && j - 1 > 0 && lattice[i + 1][j - 1] == 1)
+		myUnion.Union(i * L + j, (i + 1)*L + j - 1);
+
+	//direction -3
+	// x and y are out of range
+	if (i - 1 <= 0 && j + 1 >= L - 1 && lattice[L - 1][0] == 1)
+		myUnion.Union(i * L + j, (i - 1)*L);
+	// if x is smaller than 0
+	if (i - 1 <= 0 && j + 1 < L - 1 && lattice[L - 1][j + 1] == 1)
+		myUnion.Union(i * L + j, (i - 1)*L + j + 1);
+	// if y is larger than N-1
+	if (i - 1 > 0 && j + 1 >= L - 1 && lattice[i - 1][0] == 1)
+		myUnion.Union(i * L + j, (i - 1)*L);
+	// both inside 
+	if (i - 1 > 0 && j + 1 < L - 1 && lattice[i - 1][j + 1] == 1)
+		myUnion.Union(i * L + j, (i - 1)*L + j + 1);
+}
+
 void union_sets(int **lattice, int L, UnionFind& myUnion)
 {
 	for (int i = 0; i < L; i++)
@@ -587,82 +503,143 @@ void union_sets(int **lattice, int L, UnionFind& myUnion)
 		{
 			if (lattice[i][j] == 1)
 			{
-				//direction 1
-				// x and y are out of range
-				if (i + 1 >= L - 1 && j + 1 >= L - 1 && lattice[0][0] == 1)
-					myUnion.Union(i * L + j, 0);
-				// x is out of range
-				if (i + 1 >= L - 1 && j + 1 < L - 1 && lattice[0][L - 1] == 1)
-					myUnion.Union(i * L + j, L - 1);
-				// y is out of range
-				if (i + 1 < L - 1 && j + 1 >= L - 1 && lattice[i + 1][0] == 1)
-					myUnion.Union(i * L + j, 0);
-				// both inside
-				if (i + 1 < L - 1 && j + 1 < L - 1 && lattice[i + 1][j + 1] == 1)
-					myUnion.Union(i * L + j, (i + 1) * L + j + 1);
-
-				//direction -1
-				// x and y are smaller than 0
-				if (i - 1 <= 0 && j - 1 <= 0 && lattice[L - 1][L - 1] == 1)
-					myUnion.Union(i * L + j, (L - 1)*L + L - 1);
-				// x is smaller than 0
-				if (i - 1 <= 0 && j - 1 > 0 && lattice[L - 1][j - 1] == 1)
-					myUnion.Union(i * L + j, (L - 1)*L + j - 1);
-				// y is smaller than 0
-				if (i - 1 > 0 && j - 1 <= 0 && lattice[i - 1][L - 1] == 1)
-					myUnion.Union(i * L + j, (i - 1)*L + L - 1);
-				// both inside
-				if (i - 1 > 0 && j - 1 > 0 && lattice[i - 1][j - 1] == 1)
-					myUnion.Union(i * L + j, (i - 1)*L + j - 1);
-
-				//direction 2
-				// x is out of range 
-				if (i + 2 >= L - 1 && lattice[0][j] == 1)
-					myUnion.Union(i * L + j, j);
-				// inside
-				if (i + 2 < L - 1 && lattice[i + 2][j] == 1)
-					myUnion.Union(i * L + j, (i + 2)*L + j);
-
-				//direction -2
-				// x is smaller that 0
-				if (i - 2 <= 0 && lattice[L - 1][j] == 1)
-					myUnion.Union(i * L + j, (L - 1)*L + j);
-				// inside
-				if (i - 2 > 0 && lattice[i - 2][j] == 1)
-					myUnion.Union(i * L + j, (i - 2)*L + j);
-
-				//direction 3
-				// x and y are out of range
-				if (i + 1 >= L - 1 && j - 1 <= 0 && lattice[0][L - 1] == 1)
-					myUnion.Union(i * L + j, L - 1);
-				// if x is larger than N-1
-				if (i + 1 >= L - 1 && j - 1 > 0 && lattice[0][j - 1] == 1)
-					myUnion.Union(i * L + j, j - 1);
-				// if y is smaller than 0
-				if (i + 1 < L - 1 && j - 1 <= 0 && lattice[i + 1][L - 1] == 1)
-					myUnion.Union(i * L + j, (i + 1)*L + L - 1);
-				// both inside
-				if (i + 1 < L - 1 && j - 1 > 0 && lattice[i + 1][j - 1] == 1)
-					myUnion.Union(i * L + j, (i + 1)*L + j - 1);
-
-				//direction -3
-				// x and y are out of range
-				if (i - 1 <= 0 && j + 1 >= L - 1 && lattice[L - 1][0] == 1)
-					myUnion.Union(i * L + j, (i - 1)*L);
-				// if x is smaller than 0
-				if (i - 1 <= 0 && j + 1 < L - 1 && lattice[L - 1][j + 1] == 1)
-					myUnion.Union(i * L + j, (i - 1)*L + j + 1);
-				// if y is larger than N-1
-				if (i - 1 > 0 && j + 1 >= L - 1 && lattice[i - 1][0] == 1)
-					myUnion.Union(i * L + j, (i - 1)*L);
-				// both inside 
-				if (i - 1 > 0 && j + 1 < L - 1 && lattice[i - 1][j + 1] == 1)
-					myUnion.Union(i * L + j, (i - 1)*L + j + 1);
+				union_of_one(lattice, L, i, j, myUnion);
 			}
 		}
 }
 
-void check_percolation(int **lattice, int L, UnionFind& myUnion)
+void union_of_rest(int **lattice, int L, int a, int x, int y, int direction, UnionFind& myUnion, int row_start)
+{
+	int k = 0, kx = 0, ky = 0;
+	bool out_x = false;
+	bool out_y = false;
+
+	switch (direction)
+	{
+	case 1:
+
+		while (k <= a)
+		{
+			if (x + kx >= L || y + ky >= L)
+				a++;
+			if (x + kx >= L && y + ky >= L)
+			{
+				x = 0;
+				y = 0;
+				kx = 0;
+				ky = 0;
+			}
+			else if (x + kx >= L)
+			{
+				x = 0;
+				kx = 0;
+				ky--;
+			}
+			else if (y + ky >= L)
+			{
+				y = 0;
+				ky = 0;
+				kx--;
+			}
+			if (x + kx == L - 1 && y + ky == L - 1)
+				myUnion.Union(x * L + y, 0);
+			if (x + kx == 0 && y + ky == 0)
+				myUnion.Union(x * L + y, (L-1)*L + L - 1);
+			if (x + kx == 0)
+				myUnion.Union(x * L + y, (L - 1)*L + y + ky);
+			if (y + ky == 0)
+				myUnion.Union(x * L + y, (x + kx)*L + L - 1);
+			if (x + kx == L - 1)
+				myUnion.Union(x * L + y, y + ky);
+				lattice[0][y + ky] = 1;
+			if (y + ky == L - 1)
+				myUnion.Union(x * L + y, (x + kx)*L);
+
+			union_of_one(lattice, L, x + kx, y + ky, myUnion);
+			kx++; ky++;
+			k++;
+		}
+		break;
+
+
+	case 2:
+
+		k = 0;
+		while (k <= 2 * a + row_start)
+		{
+			if (x + kx >= L)
+			{
+				if (row_start == 0)
+					a++;
+				x = row_start;
+				kx = 0;
+			}
+			if (y == L - 1)
+				myUnion.Union(x * L + y, (x + kx)*L);
+			if (y == 0)
+				myUnion.Union(x * L + y, (x + kx)*L + L - 1);
+			if (x + kx == L - 1)
+				myUnion.Union(x * L + y, y);
+			if (x + kx == 0)
+				myUnion.Union(x * L + y, (L - 1)*L + y);
+
+			union_of_one(lattice, L, x + kx, y, myUnion);
+			kx = kx + 2;
+			k = k + 2;
+		}
+
+		break;
+
+	case 3:
+		while (k <= a)
+		{
+			if (x + kx >= L || y - ky < 0)
+				a++;
+			if (x + kx >= L && y - ky < 0)
+			{
+				x = 0;
+				y = L - 1;
+				kx = 0;
+				ky = 0;
+			}
+			else if (x + kx >= L)
+			{
+				x = 0;
+				kx = 0;
+				ky--;
+			}
+			else if (y - ky < 0)
+			{
+				y = L - 1;
+				ky = 0;
+				kx--;
+			}
+			if (x + kx == L - 1 && y - ky == L - 1)
+				myUnion.Union(x * L + y, 0);
+			if (x + kx == 0 && y - ky == 0)
+				myUnion.Union(x * L + y, (L - 1)*L + L - 1);
+			if (x + kx == 0)
+				myUnion.Union(x * L + y, (L - 1)*L + y - ky);
+			if (y - ky == 0)
+				lattice[x + kx][L - 1] = 1;
+				myUnion.Union(x * L + y, (x + kx)*L + L - 1);
+			if (x + kx == L - 1)
+				lattice[0][y - ky] = 1;
+				myUnion.Union(x * L + y, y - ky);
+			if (y - ky == L - 1)
+				myUnion.Union(x * L + y, (x + kx)*L + 0);
+				lattice[x + kx][0] = 1;
+
+			union_of_one(lattice, L, x + kx, y - ky, myUnion);
+			kx++; ky++;
+			k++;
+		}
+
+		break;
+	}
+}
+
+bool check_percolation(int **lattice, int L, UnionFind& myUnion)
 {
 	for (int i = 0; i < L; i++)
 	{
@@ -684,12 +661,12 @@ void check_percolation(int **lattice, int L, UnionFind& myUnion)
 			{
 				cout << "There is a path (y) !" << endl;
 				cout << myUnion.Find(i) << endl;
-				return;
+				return true;
 			}
 				
 		}
 	}
-	cout << "There is no path!" << endl;
+	//cout << "There is no path!" << endl;
 
 	for (int i = 0; i < L; i++)
 	{
@@ -711,17 +688,19 @@ void check_percolation(int **lattice, int L, UnionFind& myUnion)
 			{
 				cout << "There is a path (x) !" << endl;
 				cout << myUnion.Find(i) << endl;
-				return;
+				return true;
 			}
 
 		}
 	}
-	cout << "There is no path!" << endl;
+	//cout << "There is no path!" << endl;
+	return false;
 }
 
 void filling_rest(ofstream& pos_file, int **lattice, int L, int a, double needles_mass, UnionFind& myUnion)
 {
 	vector<possibleDirections> posDir;
+	vector<possibleDirections> posPer;
 	int idx = 0;
 	int row_start;
 	for (int i = 0; i < L; i++)
@@ -751,7 +730,9 @@ void filling_rest(ofstream& pos_file, int **lattice, int L, int a, double needle
 		}
 	}
 
+	bool percolating = false;
 	int rand_idx, x, y, direction;
+
 	while (!posDir.empty())
 	{
 		rand_idx = (rand() % (posDir.size()));
@@ -766,6 +747,18 @@ void filling_rest(ofstream& pos_file, int **lattice, int L, int a, double needle
 		write_in_file(pos_file, lattice, L, x, y, row_start, a, direction);
 		needles_mass += a;
 
+		if (!percolating)
+		{
+			//union_of_rest(lattice, L, a, x, y, direction, myUnion, row_start);
+			union_sets(lattice, L, myUnion);
+			if (check_percolation(lattice, L, myUnion))
+			{
+				cout << "Percolation treshold: " << needles_mass * 1.4 / (L * L * 0.5) << endl;
+				return;
+				percolating = true;
+
+			}
+		}
 		posDir.erase(posDir.begin() + rand_idx);
 		for (int i = 0; i < posDir.size(); i++)
 		{
@@ -777,6 +770,8 @@ void filling_rest(ofstream& pos_file, int **lattice, int L, int a, double needle
 				posDir.erase(posDir.begin() + i);
 			}
 		}
+
+		
 
 	}
 	cout << "Needles mass: " << needles_mass << ", number of needles: " << needles_mass / 2 << endl;
@@ -798,8 +793,8 @@ void print_representative(int L, UnionFind& myUnion)
 int main()
 {
 	double concentration = 0.2;															 // concentration of needles on lattice
-	const int L = 24 + 1;																 // a square lattice of size LxL (can only be even number, cause we need odd number for our lattice)
-	int a = 5;																			 // length of a linear segments 
+	const int L = 30 + 1;																 // a square lattice of size LxL (can only be even number, cause we need odd number for our lattice)
+	int a = 3;																			 // length of a linear segments 
 
 
 	double con_update = 0;
@@ -815,7 +810,7 @@ int main()
 		for (int j = 0; j < L; j++)
 			lattice[i][j] = 0;
 
-	//srand(time(NULL));
+	srand(time(NULL));
 
 	ofstream pos_file;
 	string file_name = "position.txt";
@@ -851,17 +846,11 @@ int main()
 			}
 			con_update = needles_mass * 1.41 / (L * L * 0.5);
 	}
-	cout << "First concentration: " << con_update << endl;
-
-	
 	UnionFind myUnion(L * L);
-	//filling_rest(pos_file, lattice, L, a, needles_mass, myUnion);
-	
-	
 	union_sets(lattice, L, myUnion);
-	print_table(lattice, L, "my_table.txt");
-	
-	check_percolation(lattice, L, myUnion);
+	filling_rest(pos_file, lattice, L, a, needles_mass, myUnion);
+	//union_sets(lattice, L, myUnion);
+	//check_percolation(lattice, L, myUnion);
 	print_representative(L, myUnion);
 	pos_file.close();
 }
